@@ -1,6 +1,6 @@
-//var Client = require('node-rest-client').Client;
 var Client = require('node-rest-client-promise').Client;
 var Express = require('express');
+//var op = require('./op_programs.js').channels;
 
 var CHANTORU_ENDPOINT = 'https://tv.so-net.ne.jp/chan-toru';
 var HEADER_PATH = './headers.json';
@@ -19,6 +19,16 @@ var url  = {
 };
 
 
+var getChannels = function (json) {
+    
+    channels = {};
+    json.header.index.forEach( function(element) {
+        var split = element.split(':');
+        channels[split[0]] = split[1];
+    });
+    return channels;
+};
+
 
 app.get(OWN_ENDPOINT.tvsearch, function(req, res){
     console.log('access.');
@@ -27,10 +37,10 @@ app.get(OWN_ENDPOINT.tvsearch, function(req, res){
     var args = {
         headers: require(HEADER_PATH),
         parameters: {
-            op: 'bytime',
-            span: '26',
-            category: '1',
-            start: date.getTime()
+            op: 'bytime',   // bytime/current
+            span: '3',      // 不明
+            category: '1',  // 1: 地上デシタル、2: BS
+            start: date.getTime() // 当日5:00～明日5:00まで、終わっている分は除く
         },
         // 以下効いていない？
         requestConfig: {
@@ -43,8 +53,11 @@ app.get(OWN_ENDPOINT.tvsearch, function(req, res){
 
     client.getPromise(url.tvsearch, args).then(
         function (val) {
+            var json = JSON.parse(val.data.toString('utf8'));
             //console.log(val.response);
-            res.json(JSON.parse(val.data.toString('utf8')));
+            //debugger;
+            res.json(json);
+            
             //console.log(val.data);
         }
     ).catch(
@@ -56,7 +69,11 @@ app.get(OWN_ENDPOINT.tvsearch, function(req, res){
 });
 
 
+
+
 /* listen()メソッドを実行して3000番ポートで待ち受け*/
 var server = app.listen(SERVER_PORT, function () {
     console.log("Node.js is listening to PORT:" + server.address().port);
 });
+
+
