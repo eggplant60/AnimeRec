@@ -31,16 +31,28 @@ var sendApiCom = function (_method, _url, _args, ...restArgs) {
     var res = restArgs[1];
     clientMethods[_method](_url, _args)
     .then(
-        function (val) {
-            //var json = JSON.parse(val.data.toString('utf8'));
-            //return res.json(json);
-            var str = val.data.toString('utf8');
-            console.log(str);
+        function (val) { // なんらかのレスポンスがあった
+            var data = val.data;
+            var response = val.response;
+            response.readable = true; // レスポンスを読み取るために必要
+            var strVal = data.toString('utf8');
+
+            // CHAN-TORUからのステータスコードをそのまま返す
+            //debugger;
+            try { // memo: 一覧取得はJSON, 予約はxmlで返ってくる
+                return res.status(response.statusCode).json(JSON.parse(strVal));
+                //return res.status(response.statusCode).send(strVal);
+            } catch (e) {
+                return res.status(response.statusCode).send(strVal);
+            }
         })
-    .catch(
-        function (error) {
+    .catch(    
+        function (error) { // レスポンスがなにもなかった
             console.error(error);
-            return res.status(500).send('Error in connection to API server.');
+            return res.status(500).json({
+                errorCode: 'E001',
+                errorMsg:  'Error in connection to API server.'
+            });
         }
     );
 };
@@ -64,7 +76,7 @@ var checkReqParamNumber = function (defaultValue, value) {
     }
     var casted = Number(value); // 整数にできない文字列ならばNaNになる
     if (!isNaN(casted)) {
-        return casted;
+        return value;
     } else {
         throw 'Invalid query, type=number.';
     }
@@ -111,7 +123,7 @@ app.get(OWN_ENDPOINT.tvsearch, function(req, res){
 
     // CHAN-TORUに投げるクエリリクエストを生成
     var query = req.query;
-    var defaultDate = date2YYYYmmddhhss(new Date());
+    var defaultDate = new Date();
     console.log(query);
     var param = {};
     try {
@@ -149,24 +161,25 @@ app.get(OWN_ENDPOINT.resv, function(req, res){
 
     // CHAN-TORUに投げるクエリリクエストを生成
     var query = req.query;
-    console.log(query);
+    //console.log(query);
     var param = {timestamp4p: Date.now()}; // 現在時刻で固定
+    console.log(param);
     var form = {};
 
     var defaultDate = date2Jst(new Date());
     try {
         form = {
             op       : checkReqParamCand(['add', 'remove', 'modify'], query.op),
-            sid      : checkReqParamNumber('0', query.sid), // チャンネルID
-            eid      : checkReqParamNumber('0', query.eid), // 番組ID
+            sid      : checkReqParamNumber('1024', query.sid), // チャンネルID
+            eid      : checkReqParamNumber('14965', query.eid), // 番組ID
             category : checkReqParamCand(['1', '2'], query.category),
-            date     : checkReqParamDateFuck2(defaultDate, query.data),
-            duration : checkReqParamNumber('0', query.duration),
-            //form.double = 'on';
-            //title = '',
-            //priority = '1',
-            quality     : checkReqParamNumber(230, query.quality),
-            condition   : checkReqParamCand(['w1', 'w2', 'w3', 'w4', 'w5', 'w6', 'w7'], query.condition),
+            //date     : '2020-01-19T23:15:00+09:00', //checkReqParamDateFuck2(defaultDate, query.data), // 必須
+            duration : checkReqParamNumber('2700', query.duration), // 必須
+            //double   : 'on',
+            //title    : '%E3%82%B0%E3%83%83%E3%83%89%E3%83%BB%E3%83%95%E3%82%A1%E3%82%A4%E3%83%88%EF%BC%883%EF%BC%89%E3%80%8C%E7%96%91%E6%83%91%E3%81%AE%E3%83%AA%E3%82%B9%E3%83%88%E3%80%8D', // 任意
+            priority : '1',
+            //quality     : checkReqParamNumber('230', query.quality),
+            //condition   : checkReqParamCand(['w1', 'w2', 'w3', 'w4', 'w5', 'w6', 'w7'], query.condition),
             destination : checkReqParamCand(['HDD'], query.destination)
         };
     } catch (e) {
@@ -176,7 +189,8 @@ app.get(OWN_ENDPOINT.resv, function(req, res){
 
     var args = {
         headers: require(HEADER_PATH),
-        form: form,
+        //form: form,
+        data: form,
         parameters: param,
         // 以下効いていない？
         requestConfig: {
@@ -188,7 +202,7 @@ app.get(OWN_ENDPOINT.resv, function(req, res){
     };
 
     // CHAN-TORU へのリクエスト実行
-    sendApiCom('POST', url.resv, args, req, res);
+    sendApiCom('POST', url.resv, args, ...arguments);
 });
 
 
