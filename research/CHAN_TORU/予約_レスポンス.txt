@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+
+
+
+
+
+<Result responseCode="830" responseMsg="ＮＨＫ総合・東京:0x3A75:グッド・ファイト（３）「疑惑のリスト」[二][字]" isListCapability="true" dateTime="2020-01-19T23:15:00+09:00" dateTime1970="1579443300000" sid="1024" duration="2700000" />
