@@ -4,6 +4,6 @@ angular.module('app')
 function wgLayout() {
     return {
         restrict: 'E',
-        template: '<div> aaa </div>'
+        templateUrl: './partials/content.html'
     };
 }

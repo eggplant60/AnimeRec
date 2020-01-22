@@ -10,7 +10,7 @@ function AppCtrl($scope, $log, $timeout, api) {
 	api.chantoru.tvsearch().$promise.then(
 		(data) => {
 			//$log.debug(data);
-			vm.programs = data;
+			vm.programs = data.list;
 		},
 		(httpError) => {
 			$log.error(httpError);
