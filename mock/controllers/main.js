@@ -6,6 +6,7 @@ function AppCtrl($scope, $log, $timeout, api) {
 
 	var vm = this;
 	vm.programs = [];
+	vm.dowList = ['Mon', 'Tue', 'Wed', 'Thu'];
 
 	api.chantoru.tvsearch().$promise.then(
 		(data) => {
