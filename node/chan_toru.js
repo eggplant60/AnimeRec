@@ -19,6 +19,18 @@ var clientMethods = {
     POST : client.postPromise,   
 };
 var app = Express();
+// CORS対応
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header(
+        'Access-Control-Allow-Headers', 
+        'Origin, X-Requested-With, Content-Type, Accept'
+    );
+    res.header(
+        'Access-Control-Allow-Methods', 
+        'GET, POST, PUT, DELETE, OPTIONS');
+    next();
+});
 var url  = {
     tvsearch : CHANTORU_ENDPOINT + '/tvsearch',
     resv : CHANTORU_ENDPOINT + '/resv',
