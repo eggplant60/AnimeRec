@@ -12,19 +12,34 @@
 			</md-toolbar>
 
 			<md-content class="scroll">
-				<md-list flex>
+				<md-list flex role="list">
 					<!-- md-subheader class="md-no-sticky">3 line item (with hover)</!md-subheader -->
-					<md-list-item class="md-3-line" ng-repeat="program in ctrl.programs" ng-click="null">
-					<img ng-src="img/PwDwTiVF_400x400.jpg" class="md-avatar"/>
-					<div class="md-list-item-text" layout="column">
-						<h3>{{ program.titleStr }}</h3>
-						<h4>{{ program.summaryStr }}</h4>
-						<p>{{ program.descriptionStr }}</p>
-					</div>
-					</md-list-item>
+					<md-list-item class="md-3-line md-long-text" ng-repeat="program in ctrl.programs">
 
-					<!--
+						<img ng-src="{{ 'img/channels/icon_' + program.serviceId + '.PNG' }}" class="md-avatar"/>
+						<div class="md-list-item-text" layout="column">
+							<h4>{{ program.titleStr }}</h4>
+							<p>{{ program.descriptionStr | extractDate }}</p>
+							<p>{{ program.summaryStr }}</p>
+							<div layout="row" layout-align="start center">
+								<md-button class="md-icon-button">
+									<md-icon md-svg-icon="img/buttons/reply.svg"></md-icon>
+								</md-button>
+								<md-button class="md-icon-button">
+									<md-icon md-svg-icon="img/buttons/retweet.svg"></md-icon>
+								</md-button>
+								<md-button class="md-icon-button">
+									<md-icon md-svg-icon="img/buttons/favorite.svg"></md-icon>
+								</md-button>
+								<md-button class="md-icon-button">
+									<md-icon md-svg-icon="img/buttons/menu.svg"></md-icon>
+								</md-button>
+							</div>
+						</div>
+					</md-list-item>
 					<md-divider ></md-divider>
+					<!--
+					
 					<md-subheader class="md-no-sticky">2 line item</md-subheader>
 					<md-list-item class="md-2-line">
 					<img ng-src="{{todos[0].face}}?20" class="md-avatar" alt="{{todos[0].who}}" />
