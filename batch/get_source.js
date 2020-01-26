@@ -3,7 +3,7 @@ const dateformat = require('dateformat');
 const fs = require('fs');
 
 const chantoruEndpoint = 'https://tv.so-net.ne.jp/chan-toru';
-const url = chantoruEndpoint + '/tvsearch'
+const url = chantoruEndpoint + '/tvsearch';
 const headerPath = '../conf/chan_toru.json';
 const timeout = 10000; // 10 sec
 const jsonPath = './json/';
@@ -19,14 +19,17 @@ var date2YYYYmmdd = function (date) {
 };
 
 const now = new Date();
+let baseDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0);
 
+//console.log(now);
+//console.log(baseDate);
 
 // 番組表取得
 function getProgramsFromToday(delta) {
 	
-	let startDate = new Date(now.getTime());
+	let startDate = new Date(baseDate.getTime());
 	startDate.setDate(startDate.getDate() + delta);
-	let startQuery = date2YYYYmmddhhss(startDate)
+	let startQuery = date2YYYYmmddhhss(startDate);
 	console.log(startQuery);
 	
 	let param = {};
