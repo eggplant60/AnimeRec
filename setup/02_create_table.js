@@ -5,13 +5,13 @@ const dbConf = require('../conf/db.json');
 
 const sqlTablePrograms = 'CREATE TABLE IF NOT EXISTS programs (' +
 	'program_id varchar PRIMARY KEY,' +
-	'created_at timestamp,' +
-	'updated_at timestamp,' +
+	'created_at timestamp with time zone,' +
+	'updated_at timestamp with time zone,' +
 	'start_udate bigint,' + // Unix Time
 	'end_udate bigint,' +   // Unix Time
 	'duration integer,' +
-	'start_date timestamp,' +
-	'end_date timestamp,' +
+	'start_date timestamp with time zone,' +
+	'end_date timestamp with time zone,' +
 	'service_id varchar,' + // チャンネル
 	'genre_ids varchar,' +  // 正規化される前の生の文字列
 	'area_id varchar,' +
