@@ -33,10 +33,10 @@ Promise.all(sources.map(sendQuery))
 function sendQuery(path) {
 	console.log(path);
 	let sourceData = require(path).list;
+	const now = new Date();
 
 	// クエリ生成
 	let insertValues = sourceData.map((item) => {
-		const now = new Date();
 		return [
 		item.programId,
 		now,
@@ -66,10 +66,31 @@ function sendQuery(path) {
 	let query = format(
 		'INSERT INTO programs VALUES %L ' +
 		'ON CONFLICT ON CONSTRAINT programs_pkey ' + 
-		'DO NOTHING',
+		'DO NOTHING;',
 		insertValues
 	);
-	
+
+	// 番組-ジャンルの対応表生成
+	insertValues = [];
+	sourceData.forEach( element => {
+		let genres = element.genreIds.trim().split(' ');
+		genres.forEach( jlement => {
+			insertValues.push([
+				element.programId, 
+				jlement,
+				now,
+				now,
+			]);
+		});
+	});
+
+	query += format(
+		'INSERT INTO program_genres VALUES %L ' +
+		'ON CONFLICT ON CONSTRAINT program_genres_pkey ' + 
+		'DO NOTHING;',
+		insertValues
+	);
+
 	// SQL送信
 	return new Promise((resolve, reject) => {
 		client.query(query, (err, res) => {

@@ -27,15 +27,24 @@ const sqlTablePrograms = 'CREATE TABLE IF NOT EXISTS programs (' +
 	'title varchar' +
 	  ');';
 		   
-const sqlIndexPrograms =
-	  'CREATE INDEX IF NOT EXISTS idx_programs_01 ON programs (start_date, end_date);' +
-	  'CREATE INDEX IF NOT EXISTS idx_programs_02 ON programs (service_id);' +
-	  'CREATE INDEX IF NOT EXISTS idx_programs_03 ON programs (created_at, updated_at);';
+const sqlIndexPrograms = 
+	'CREATE INDEX IF NOT EXISTS idx_programs_01 ON programs (start_date, end_date);' +
+	'CREATE INDEX IF NOT EXISTS idx_programs_02 ON programs (service_id);' +
+	'CREATE INDEX IF NOT EXISTS idx_programs_03 ON programs (created_at, updated_at);';
+
+const sqlIndexProgramGenres = 
+	'CREATE TABLE IF NOT EXISTS program_genres (' +
+	'program_id varchar,' +
+	'genre_id varchar,' +
+	'created_at timestamp with time zone,' +
+	'updated_at timestamp with time zone,' +
+	'PRIMARY KEY (program_id, genre_id)' +
+	');';
 
 const client = new Client(dbConf); 
 client.connect();
 
-client.query(sqlTablePrograms + sqlIndexPrograms, (err, res) => {
+client.query(sqlTablePrograms + sqlIndexPrograms + sqlIndexProgramGenres, (err, res) => {
 	if (!err) {
 	console.log(res);
 	console.log('success!');

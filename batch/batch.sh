@@ -8,7 +8,8 @@ export NODE_PATH=$(npm root -g)
 
 cd $WORK_DIR
 
-rm "$JSON_DIR/*.json"
+#rm "$JSON_DIR/*.json"
+rm json/*.json
 
 $NODE get_source.js
 $NODE insert_db.js 
