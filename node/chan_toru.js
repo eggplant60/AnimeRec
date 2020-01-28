@@ -162,15 +162,13 @@ app.get(OWN_ENDPOINT.tvsearch, function(req, res){
 	if (!query.genreId) {
 		sql = {
 			text:  'SELECT * FROM programs WHERE start_date >= $1 AND start_date < $2 ' +
-				'ORDER BY start_date DESC, service_id;',
+				'ORDER BY start_date, service_id;',
 			values:[query.from, query.to]
 		};
 	} else {
 		sql = {
-			text:  'SELECT P.* FROM programs AS P INNER JOIN program_genres AS G ' +
-					'ON P.program_id = G.program_id ' +
-					'WHERE P.start_date >= $1 AND P.start_date < $2 AND G.genre_id = $3 ' +
-					'ORDER BY start_date DESC, service_id;',
+			text:  'SELECT * FROM programs WHERE start_date >= $1 AND start_date < $2 AND genre_ids = $3 ' + 
+					'ORDER BY start_date, service_id;',
 			values:[query.from, query.to, query.genreId]
 		};
 	}
