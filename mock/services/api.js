@@ -41,7 +41,7 @@
 			_url.tvsearch, 
 			_paramDefaults.tvsearch,
 			{
-				tvsearch: {method: 'GET'},
+				tvsearch: {method: 'GET', isArray: true},
 				resv    : {method: 'GET'}
 			}
 		);

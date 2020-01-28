@@ -16,11 +16,11 @@
 					<!-- md-subheader class="md-no-sticky">3 line item (with hover)</!md-subheader -->
 					<md-list-item class="md-3-line md-long-text" ng-repeat="program in ctrl.programs">
 
-						<img ng-src="{{ 'img/channels/icon_' + program.serviceId + '.PNG' }}" class="md-avatar"/>
+						<img ng-src="{{ 'img/channels/icon_' + program.service_id + '.PNG' }}" class="md-avatar"/>
 						<div class="md-list-item-text" layout="column">
-							<h4>{{ program.titleStr }}</h4>
-							<p>{{ program.descriptionStr | extractDate }}</p>
-							<p>{{ program.summaryStr }}</p>
+							<h4>{{ program.title }}</h4>
+							<p>{{ program.description | extractDate }}</p>
+							<p>{{ program.summary }}</p>
 							<div layout="row" layout-align="start center">
 								<md-button class="md-icon-button">
 									<md-icon md-svg-icon="img/buttons/reply.svg"></md-icon>
