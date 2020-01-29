@@ -1,24 +1,27 @@
 <div layout-gt-sm="row" layout="column" ng-cloak ng-controller="AppCtrl as ctrl">
 
-	<div ng-repeat="dow in ctrl.dowList">
+	<div ng-repeat="column in ctrl.programList">
 
 		<!-- 1カラム目 -->
 		<div class="dow-column" flex-gt-sm="100" flex>
 
 			<md-toolbar layout="row">
 				<div class="md-toolbar-tools">
-					<span>{{ dow }}</span>
+					<span>{{ column.columnDate | date : 'MM/dd (EEE)' }}</span>
 				</div>
 			</md-toolbar>
 
 			<md-content class="scroll">
 				<md-list flex role="list">
 					<!-- md-subheader class="md-no-sticky">3 line item (with hover)</!md-subheader -->
-					<md-list-item class="md-3-line md-long-text" ng-repeat="program in ctrl.programs">
+					<md-list-item class="md-3-line md-long-text" ng-repeat="program in column.rowPrograms">
 
 						<img ng-src="{{ 'img/channels/icon_' + program.service_id + '.PNG' }}" class="md-avatar"/>
 						<div class="md-list-item-text" layout="column">
-							<h4>{{ program.title }}</h4>
+							<h4>{{ program.title | programTitle }}</h4>
+							<!--
+							<p>{{ program.title | episodeTitle }}</p>
+							-->
 							<p>{{ program.description | extractDate }}</p>
 							<p>{{ program.summary }}</p>
 							<div layout="row" layout-align="start center">

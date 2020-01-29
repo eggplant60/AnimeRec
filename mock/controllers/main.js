@@ -1,48 +1,74 @@
 angular.module('app')
-	.controller('AppCtrl', ['$scope', '$log', '$timeout', 'ApiService', 'CommonService', AppCtrl])
-	.filter('extractDate', extractDate);
-	//.filter('extractChannel', extractDate);
+	.controller('AppCtrl', ['$scope', '$log', '$timeout', '$filter', 'ApiService', 'CommonService', AppCtrl])
+	.filter('extractDate', extractDate)
+	.filter('programTitle', programTitle)
+	.filter('episodeTitle', episodeTitle);
 
-function AppCtrl($scope, $log, $timeout, api, common) {
+function AppCtrl($scope, $log, $timeout, $filter, api, common) {
 	$log.debug('AppCtrl: start ---------------------');
 
 	const genreId = '107100';
 
 	var vm = this;
-	vm.programs = [];
-	vm.dowList = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-	const params = {
-		from    : '2020-01-28T08:45:00',
-		to      : '2020-02-04T05:00:00',
-		genreId : '107100'
-	};
+	// TLの列を作る
+	//vm.dowList = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];	
+	const now = new Date();
+	const baseDate = common.roundDate(now);
+	let dateColumns = [baseDate];
+	for (let i=0; i < 6; i++) {
+		dateColumns.push(common.plus1day(dateColumns[i]));
+	}
 
-	api.chantoru.tvsearch(params).$promise.then(
-		(data) => {
-			//$log.debug(data);
-			vm.programs = data;
-		},
-		(httpError) => {
-			$log.error(httpError);
-		}
-	);
+	vm.programList = dateColumns.map((element) => {
+		return {columnDate: element, rowPrograms: []}
+	});
+
+	for (let i in vm.programList) {
+		let thisDate = vm.programList[i].columnDate;
+		let params = {
+			from    : common.date2str(thisDate),
+			to      : common.date2str(common.plus1day(thisDate)),
+			genreId : genreId
+		};
+		//console.log(params);
+		api.chantoru.tvsearch(params).$promise.then(
+			(data) => {
+				//$log.debug(data);
+				vm.programList[i].rowPrograms = data;
+			},
+			(err) => {
+				$log.error(err);
+			}
+		);
+	
+	}
+
+
+
 	
 }
-
-// function extractDate () {
-// 	return function(text) {
-// 		var rec = /(.+)\[.+\]/.exec(text);
-// 		if (!rec) {
-// 			return rec[0];
-// 		} else {
-// 			return '';
-// 		}
-// 	};
-// }
 
 function extractDate () {
 	return function(value) {
 		return value.split('[')[0].trim();
+	};
+}
+
+function programTitle () {
+	return function(value) {
+		return value.replace(/　/g, ' ');
+	};
+}
+
+function episodeTitle () {
+	return function(value) {
+		console.log(value);
+		let jp = value.match(/「(.+)」/);
+		console.log('ret: ' + jp);
+		let sharp = value.match(/(#[0-9]+)/);
+		console.log('ret: ' + sharp);
+		//console.log('ret: null' );
+		return '';
 	};
 }
