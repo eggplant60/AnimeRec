@@ -21,11 +21,8 @@
 							<a ng-href="{{ctrl.searchEngine + (program.title | programTitle)}}" target="_blank">
 								{{program.title | programTitle}}
 							</a>
-							<!--
-							<p>{{ program.title | episodeTitle }}</p>
-							-->
 							<p>{{ program.description | extractDate }}</p>
-							<p>{{ program.summary }}</p>
+							<p>{{ program.summary | summaryShort }}</p>
 							<div layout="row" layout-align="start center">
 								<md-button class="md-icon-button">
 									<md-icon md-svg-icon="img/buttons/reply.svg"></md-icon>

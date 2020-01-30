@@ -2,7 +2,8 @@ angular.module('app')
 	.controller('AppCtrl', ['$scope', '$log', '$timeout', '$filter', 'ApiService', 'CommonService', AppCtrl])
 	.filter('extractDate', extractDate)
 	.filter('programTitle', programTitle)
-	.filter('episodeTitle', episodeTitle);
+	.filter('episodeTitle', episodeTitle)
+	.filter('summaryShort', summaryShort);
 
 function AppCtrl($scope, $log, $timeout, $filter, api, common) {
 	$log.debug('AppCtrl: start ---------------------');
@@ -73,4 +74,16 @@ function episodeTitle () {
 		//console.log('ret: null' );
 		return '';
 	};
+}
+
+const summaryMaxLen = 70;
+
+function summaryShort () {
+	return function(value) {
+		if (value.length >= summaryMaxLen) {
+			return value.substr(0, summaryMaxLen) + '...';
+		} else {
+			return value;
+		}
+	}
 }
