@@ -19,5 +19,6 @@
 		this.date2str = (date) => {
 			return $filter('date')(date, 'yyyy-MM-ddTHH:mm:ss')
 		};
+
 	}
 })();

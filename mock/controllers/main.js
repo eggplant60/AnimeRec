@@ -10,6 +10,7 @@ function AppCtrl($scope, $log, $timeout, $filter, api, common) {
 	const genreId = '107100';
 
 	var vm = this;
+	vm.searchEngine='https://google.com/search?q=';
 
 	// TLの列を作る
 	//vm.dowList = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];	
@@ -21,7 +22,7 @@ function AppCtrl($scope, $log, $timeout, $filter, api, common) {
 	}
 
 	vm.programList = dateColumns.map((element) => {
-		return {columnDate: element, rowPrograms: []}
+		return {columnDate: element, rowPrograms: []};
 	});
 
 	for (let i in vm.programList) {
@@ -42,11 +43,7 @@ function AppCtrl($scope, $log, $timeout, $filter, api, common) {
 			}
 		);
 	
-	}
-
-
-
-	
+	}	
 }
 
 function extractDate () {
@@ -57,7 +54,12 @@ function extractDate () {
 
 function programTitle () {
 	return function(value) {
-		return value.replace(/　/g, ' ');
+		let tmp = value.replace(/　/g, ' ').replace(/＃/g, '#');
+		if (/^アニメ.+$/.test(tmp)) {
+			return tmp.split('#')[0].split('[')[0];
+		} else {
+			return tmp.split('「')[0].split('#')[0].split('[')[0];
+		}
 	};
 }
 

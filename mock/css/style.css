@@ -20,3 +20,12 @@
 	overflow-y: scroll;
 	height: 100%;
 }
+
+a {
+	color: white;
+	text-decoration: none;
+}
+
+a:hover {
+	color: skyblue;
+}
