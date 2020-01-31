@@ -9,11 +9,28 @@
 /*
  *
  */
+ .sidebar {
+	position: absolute;
+	width: 60px;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	background-color: #333336; 
+	margin-right: 5px;
+}
+
+.sidebar-button {
+	margin-bottom: 20px;
+}
+
 .dow-column {
-	width: 400px;
+	position: relative;
+	left: 65px;
+	width: 350px;
 	margin-right: 6px;
 	height: 90vh;
 }
+
 
 .scroll {
 	overflow-x: hidden;

@@ -1,13 +1,22 @@
-<div layout-gt-sm="row" layout="column" ng-cloak ng-controller="AppCtrl as ctrl">
+<div layout="row" ng-cloak ng-controller="AppCtrl as ctrl">
+
+	<!-- サイドバー -->
+	<div class="sidebar" layout="column">
+		<span flex></span>
+		<md-icon class="sidebar-button" md-svg-icon="img/buttons/menu.svg" aria-label="Menu"></md-icon>
+		<md-icon class="sidebar-button" md-svg-icon="img/buttons/favorite.svg" aria-label="Favorites"></md-icon>
+		<md-icon class="sidebar-button" md-svg-icon="img/buttons/retweet.svg" aria-label="More Options"></md-icon>
+	</div>
 
 	<div ng-repeat="column in ctrl.programList">
 
 		<!-- 1カラム目 -->
-		<div class="dow-column" flex-gt-sm="100" flex>
+		
+		<div class="dow-column">
 
 			<md-toolbar layout="row">
 				<div class="md-toolbar-tools">
-					<span>{{ column.columnDate | date : 'MM/dd (EEE)' }}</span>
+					<span>{{ column.columnDate | date : 'M/d (EEE)' }}</span>
 				</div>
 			</md-toolbar>
 
@@ -39,12 +48,9 @@
 							</div>
 						</div>
 					</md-list-item>
-					<md-divider ></md-divider>
 				</md-list>
 			</md-content>
 		</div>
-
 		<md-divider></md-divider>
-
 	</div>
 </div>
