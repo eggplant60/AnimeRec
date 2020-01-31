@@ -1,7 +1,7 @@
 angular.module('app', ['ngMaterial', 'ngResource'])
 	.config(function($mdThemingProvider) {
 		$mdThemingProvider.theme('default')
-			.primaryPalette('indigo')
+			.primaryPalette('blue-grey')
 			.dark();
 	})
 	.config(function($logProvider) {

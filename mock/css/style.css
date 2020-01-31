@@ -15,7 +15,7 @@
 	left: 0;
 	top: 0;
 	bottom: 0;
-	background-color: #333336; 
+	background-color: #333340;
 	margin-right: 5px;
 }
 
@@ -45,4 +45,21 @@ a {
 
 a:hover {
 	color: skyblue;
+}
+
+
+icon-t {
+	color: white;
+}
+
+icon-r {
+	color: green;
+}
+
+icon-f {
+	color: red;
+}
+
+icon-m {
+	color: white;
 }

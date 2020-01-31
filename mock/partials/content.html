@@ -1,12 +1,14 @@
 <div layout="row" ng-cloak ng-controller="AppCtrl as ctrl">
 
 	<!-- サイドバー -->
-	<div class="sidebar" layout="column">
+	<div class="sidebar" layout="column" layout-align="end center">
+
 		<span flex></span>
-		<md-icon class="sidebar-button" md-svg-icon="img/buttons/menu.svg" aria-label="Menu"></md-icon>
-		<md-icon class="sidebar-button" md-svg-icon="img/buttons/favorite.svg" aria-label="Favorites"></md-icon>
-		<md-icon class="sidebar-button" md-svg-icon="img/buttons/retweet.svg" aria-label="More Options"></md-icon>
+		<md-button class="sidebar-button">
+			<i class="material-icons" ng-style="{ color: '#00CCFF'}">favorite_border</i>
+		</md-button>
 	</div>
+
 
 	<div ng-repeat="column in ctrl.programList">
 
@@ -16,7 +18,7 @@
 
 			<md-toolbar layout="row">
 				<div class="md-toolbar-tools">
-					<span>{{ column.columnDate | date : 'M/d (EEE)' }}</span>
+					<b>{{ column.columnDate | date : 'M/d (EEE)' }}</b>
 				</div>
 			</md-toolbar>
 
@@ -34,16 +36,16 @@
 							<p>{{ program.summary | summaryShort }}</p>
 							<div layout="row" layout-align="start center">
 								<md-button class="md-icon-button">
-									<md-icon md-svg-icon="img/buttons/reply.svg"></md-icon>
+									<i class="material-icons" ng-style="{ color: 'grey'}">chat_bubble_outline</i>
 								</md-button>
 								<md-button class="md-icon-button">
-									<md-icon md-svg-icon="img/buttons/retweet.svg"></md-icon>
+									<i class="material-icons" ng-style="{ color: 'grey'}">repeat</i>
 								</md-button>
 								<md-button class="md-icon-button">
-									<md-icon md-svg-icon="img/buttons/favorite.svg"></md-icon>
+									<i class="material-icons" ng-style="{ color: 'grey'}">favorite_border</i>
 								</md-button>
 								<md-button class="md-icon-button">
-									<md-icon md-svg-icon="img/buttons/menu.svg"></md-icon>
+									<i class="material-icons" ng-style="{ color: 'grey'}">more_horiz</i>
 								</md-button>
 							</div>
 						</div>
