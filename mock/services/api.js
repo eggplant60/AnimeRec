@@ -6,29 +6,16 @@
 
 	function ApiService($log, $resource) {
 
-		var date = new Date(); // 現在時刻
-
-		//$log.debug(date.getTime());
-		//$log.debug(date.toJSON());
-
-		var _baseUrl = 'http://127.0.0.1:3001/api';
-		var _url  = {
-			tvsearch : _baseUrl + '/tvsearch',
-			resv : _baseUrl + '/resv',
-		};
-		var _paramDefaults = {
-			tvsearch : {
-				//op: 'bytime',
-				//span: '23',
-				//category: '1',
-				//start: date.toJSON()
-			},
+		const _baseUrl = 'http://127.0.0.1:3001/api';
+		this.paramDefaults = {
+			tvsearch : {},
+			schedule : {},
 			resv : {
 				op: 'add', 
 				sid: 0, 
 				eid: 0, 
 				category: 1, 
-				date: date.toJSON(),
+				//date: date.toJSON(),
 				duration: 0,
 				title: '',
 				quality: 230,
@@ -37,12 +24,23 @@
 			}
 		};
 
-		this.chantoru = $resource(
-			_url.tvsearch, 
-			_paramDefaults.tvsearch,
+		this.tvsearch = $resource(_baseUrl + '/tvsearch', {},
 			{
-				tvsearch: {method: 'GET', isArray: true},
-				resv    : {method: 'GET'}
+				get: {method: 'GET', isArray: true}
+			}
+		);
+
+		this.schedule = $resource(_baseUrl + '/schedule', {},
+			{
+				get: {method: 'GET', isArray: true},
+
+			}
+		);
+
+		this.reserve = $resource(_baseUrl + '/resv', {},
+			{
+				get: {method: 'GET'},
+
 			}
 		);
 	}

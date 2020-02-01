@@ -162,7 +162,7 @@ app.get(OWN_ENDPOINT.tvsearch, function(req, res){
 
 	if (!query.from || !query.to) {
 		console.error('Error: set "from" and "to" parameter!');
-		return res.status(403).json({
+		return res.status(400).json({
 			errorCode: 'E011',
 			errorMsg:  'Error: Invalid paramter.'
 		});

@@ -9,16 +9,17 @@ function AppCtrl($scope, $log, $timeout, $filter, api, common) {
 	$log.debug('AppCtrl: start ---------------------');
 
 	const genreId = '107100';
-
 	var vm = this;
 	vm.searchEngine='https://google.com/search?q=';
 
-	// TLの列を作る
-	//vm.dowList = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];	
+	/* 
+	 * 番組表取得
+	 */
 	const now = new Date();
+	const nColumns = 7;
 	const baseDate = common.roundDate(now);
 	let dateColumns = [baseDate];
-	for (let i=0; i < 6; i++) {
+	for (let i=0; i < nColumns-1; i++) {
 		dateColumns.push(common.plus1day(dateColumns[i]));
 	}
 
@@ -33,8 +34,7 @@ function AppCtrl($scope, $log, $timeout, $filter, api, common) {
 			to      : common.date2str(common.plus1day(thisDate)),
 			genreId : genreId
 		};
-		//console.log(params);
-		api.chantoru.tvsearch(params).$promise.then(
+		api.tvsearch.get(params).$promise.then(
 			(data) => {
 				//$log.debug(data);
 				vm.programList[i].rowPrograms = data;
@@ -43,8 +43,20 @@ function AppCtrl($scope, $log, $timeout, $filter, api, common) {
 				$log.error(err);
 			}
 		);
-	
-	}	
+	}
+	$log.debug('complete programs');
+
+	/* 
+	 * 予約一覧取得
+	 */
+	vm.schedule = [];
+	api.schedule.get(api.default).$promise.then(
+		(data) => {
+			$log.debug(data);
+			vm.schedule = data;
+		}
+	);
+
 }
 
 function extractDate () {
@@ -85,5 +97,5 @@ function summaryShort () {
 		} else {
 			return value;
 		}
-	}
+	};
 }
