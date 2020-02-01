@@ -1,11 +1,19 @@
 angular.module('app')
-	.controller('AppCtrl', ['$scope', '$log', '$timeout', '$filter', 'ApiService', 'CommonService', AppCtrl])
+	.controller('AppCtrl', [
+		'$scope', 
+		'$log', 
+		'$timeout', 
+		'$filter', 
+		'$mdDialog',
+		'ApiService', 
+		'CommonService', 
+		AppCtrl])
 	.filter('extractDate', extractDate)
 	.filter('programTitle', programTitle)
 	.filter('episodeTitle', episodeTitle)
 	.filter('summaryShort', summaryShort);
 
-function AppCtrl($scope, $log, $timeout, $filter, api, common) {
+function AppCtrl($scope, $log, $timeout, $filter, $mdDialog, api, common) {
 	$log.debug('AppCtrl: start ---------------------');
 
 	const genreId = '107100';
@@ -50,13 +58,43 @@ function AppCtrl($scope, $log, $timeout, $filter, api, common) {
 	 * 予約一覧取得
 	 */
 	vm.schedule = [];
-	api.schedule.get(api.default).$promise.then(
-		(data) => {
-			$log.debug(data);
-			vm.schedule = data;
-		}
-	);
+	// api.schedule.get(api.default).$promise.then(
+	// 	(data) => {
+	// 		$log.debug(data);
+	// 		vm.schedule = data;
+	// 	}
+	// );
 
+	/* 
+	 * デバッグ用ダイアログ
+	 */
+	vm.openDebugDialog = function(program) {
+		$log.debug('dialog');
+		$log.debug(program);
+		$mdDialog.show({
+			controller: DialogController,
+			templateUrl: 'partials/dialog.html',
+			parent: angular.element(document.body),
+			//targetEvent: ev,
+			clickOutsideToClose: true,
+			fullscreen: false,
+			locals: {
+				program: program
+			}
+		});
+		function DialogController($scope, $mdDialog, program) {
+			$scope.program = program;
+			$scope.hide = function() {
+				$mdDialog.hide();
+			};
+			$scope.cancel = function() {
+				$mdDialog.cancel();
+			};
+			$scope.answer = function(answer) {
+				$mdDialog.hide(answer);
+			};
+		}	
+	};
 }
 
 function extractDate () {

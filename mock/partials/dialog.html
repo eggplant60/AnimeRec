@@ -1,0 +1,48 @@
+<md-dialog aria-label="Debug">
+	<form ng-cloak>
+		<md-toolbar>
+			<div class="md-toolbar-tools">
+				<h2>{{ program.title }}</h2>
+				<span flex></span>
+				<md-button class="md-icon-button" ng-click="cancel()">
+					<i class="material-icons" ng-style="{ color: 'white'}">close</i>
+			  </md-button>
+			</div>
+		</md-toolbar>
+  
+		<md-dialog-content>
+			<div class="md-dialog-content">
+				<div>
+					{{ program.summary }}
+				</div>
+				<br>
+				<div>
+					deescription: {{ program.description}}
+				</div>
+				<div>
+					チャンネルID: {{ program.service_id }}
+				</div>
+				<div>
+					番組ID: {{ program.program_id}}
+				</div>
+				<div>
+					ジャンルID {{ program.genre_ids}}
+				</div>
+				<div>
+					登録日: {{ program.created_at}}
+				</div>
+				<div>
+					更新日: {{ program.updated_at}}	
+				</div>
+
+			</div>
+		</md-dialog-content>
+
+		<md-dialog-actions layout="row">
+			<span flex></span>
+			<md-button ng-click="answer('close dialog.')">
+				閉じる
+			</md-button>
+		</md-dialog-actions>
+	</form>
+</md-dialog>
