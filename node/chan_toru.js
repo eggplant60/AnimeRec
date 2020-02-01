@@ -2,7 +2,7 @@ const restClient = require('node-rest-client-promise').Client;
 const dbClient = require('pg').Client;
 const Express = require('express');
 const dateformat = require('dateformat');
-
+//const htmlParser = require('node-html-parser');
 
 // DB関連
 const dbConf = require('../conf/db.json');
@@ -24,6 +24,7 @@ const OWN_ENDPOINT = {
 	tvsearch : '/api/tvsearch/',
 	resv     : '/api/resv/',
 	schedule : '/api/schedule/' ,
+	eventId  : '/api/eventId/',
 };
 app.use((req, res, next) => {   // CORS対応
 	res.header('Access-Control-Allow-Origin', '*');
@@ -38,15 +39,16 @@ app.use((req, res, next) => {   // CORS対応
 });
 const orgUrl  = {
 	tvsearch : CHANTORU_ENDPOINT + '/tvsearch',
-	list : CHANTORU_ENDPOINT + '/list',
-	resv : CHANTORU_ENDPOINT + '/resv',
+	list   : CHANTORU_ENDPOINT + '/list',
+	resv   : CHANTORU_ENDPOINT + '/resv',
+	detail : CHANTORU_ENDPOINT + '/detail',
 };
 
 
 /* 
  * API実行の共通部
  * @param
- *   _method: ex. "GET"/"POST"
+ *   _method: ex. 'GET'/'POST'
  *   _url:    APIのエンドポイント
  *   _url:    URLパラメータ、ヘッダー、POSTデータなど
  *   _parser: APIによるレスポンスの違いを吸収するための関数
@@ -198,6 +200,60 @@ app.get(OWN_ENDPOINT.tvsearch, function(req, res){
 });
 
 /* 
+ * event_id取得API
+ * @description
+ *   CHAN-TORUのlist APIを叩き、番組詳細画面から event_id を取得
+ * @params
+ *   sid: ex '1024'
+ *   pid: ex '101024202002020315'
+ */
+app.get(OWN_ENDPOINT.eventId, function(req, res){
+	console.log('access: event_id query.');
+
+	// CHAN-TORUに投げるクエリリクエストを生成
+	var query = req.query;
+	var postParam = {};
+
+	try {
+		postParam = {
+			type : 'bytime',
+			cat  : '1', 
+			area : '23',
+			sid  : checkReqParamNumber(query.sid),
+			pid  : checkReqParamNumber(query.pid),
+			//start: checkReqParamNumber(query.start), // 任意
+			//end  : checkReqParamNumber(query.end), // 任意
+			//timestamp4p:
+		};
+	} catch (e) {
+		return res.status(400).send('Bad Request: ' + e + '<br>' + JSON.stringify(query));
+	}
+	console.debug(postParam);
+
+	var args = {
+		headers: require(headerPath),
+		parameters: postParam,
+		// 以下効いていない？
+		requestConfig: {
+			timeout: TIMEOUT
+		},
+		responseConfig: {
+			timeout: TIMEOUT
+		}
+	};
+
+	// CHAN-TORU へのリクエスト実行
+	sendApiCom('POST', orgUrl.detail, args, function (resData) {
+		//console.log(typeof resData); // object
+		var decoded = resData.toString('utf8');
+		//console.log(decoded);
+		var eid = decoded.match(/eid=([0-9]+)&/)[1];
+		//console.log(eid);
+		return eid;
+	}, ...arguments);
+});
+
+/* 
  * 番組予約一覧取得API
  * @description
  *   CHAN-TORUのlist APIを叩き、nasneの予約一覧を取得
@@ -211,11 +267,11 @@ app.get(OWN_ENDPOINT.schedule, function(req, res){
 	var query = req.query;
 
 	postParam = {
-		command: "schedule",
-		resp:    "json",
+		command: 'schedule',
+		resp:    'json',
 		index:   0,
 		num:     0, // 0はおそらく全取得
-		type:    "manual",
+		type:    'manual', // 'all' との違いは不明
 	};
 
 	var args = {
@@ -234,7 +290,7 @@ app.get(OWN_ENDPOINT.schedule, function(req, res){
 	// CHAN-TORU へのリクエスト実行
 	sendApiCom('POST', orgUrl.list, args, function (resData) {
 		//console.log(typeof resData); // object
-		var pretty = JSON.stringify(resData.list, null, " "); // インデントありで送信
+		var pretty = JSON.stringify(resData.list, null, ' '); // インデントありで送信
 		return pretty;
 	}, ...arguments);
 });
@@ -258,16 +314,17 @@ app.get(OWN_ENDPOINT.resv, function(req, res){
 	try {
 		postData = {
 			op       : checkReqParamCand(['add', 'remove', 'modify'], query.op),
-			sid      : checkReqParamNumber('1024', query.sid), // チャンネルID
-			eid      : checkReqParamNumber('23251', query.eid), // 番組ID
+			sid      : checkReqParamNumber('0', query.sid), // チャンネルID
+			eid      : checkReqParamNumber('0', query.eid), // 番組ID
 			category : checkReqParamCand(['1', '2'], query.category),
-			date     : '2020-01-01T21:50:00+09:00', //checkReqParamDateFuck2(defaultDate, query.data), // 必須
+			date     : checkReqParamDateFuck2(defaultDate, query.data), // 必須
 			duration : checkReqParamNumber('1200', query.duration), // 必須
+			// 以下任意
 			//double   : 'on',
 			//title    : '%E3%82%B0%E3%83%83%E3%83%89%E3%83%BB%E3%83%95%E3%82%A1%E3%82%A4%E3%83%88%EF%BC%883%EF%BC%89%E3%80%8C%E7%96%91%E6%83%91%E3%81%AE%E3%83%AA%E3%82%B9%E3%83%88%E3%80%8D', // 任意
 			priority : '1',
-			//quality     : checkReqParamNumber('230', query.quality),
-			//condition   : checkReqParamCand(['w1', 'w2', 'w3', 'w4', 'w5', 'w6', 'w7'], query.condition),
+			quality     : checkReqParamNumber('230', query.quality),
+			condition   : checkReqParamCand(['w1', 'w2', 'w3', 'w4', 'w5', 'w6', 'w7'], query.condition),
 			destination : checkReqParamCand(['HDD'], query.destination)
 		};
 	} catch (e) {
@@ -290,7 +347,7 @@ app.get(OWN_ENDPOINT.resv, function(req, res){
 
 	// CHAN-TORU へのリクエスト実行
 	sendApiCom('POST', orgUrl.resv, args, function(resData) {
-		var pretty = JSON.stringify(resData.Result.$, null, " "); // インデントありで送信
+		var pretty = JSON.stringify(resData.Result.$, null, ' '); // インデントありで送信
 		console.debug(pretty);
 		return pretty;
 	}, ...arguments);	
