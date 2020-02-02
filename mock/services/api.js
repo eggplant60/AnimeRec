@@ -10,18 +10,8 @@
 		this.paramDefaults = {
 			tvsearch : {},
 			schedule : {},
-			resv : {
-				op: 'add', 
-				sid: 0, 
-				eid: 0, 
-				category: 1, 
-				//date: date.toJSON(),
-				duration: 0,
-				title: '',
-				quality: 230,
-				condition: 'w1',
-				destination: 'HDD'
-			}
+			resv     : {},
+			resv2    : {}
 		};
 
 		this.tvsearch = $resource(_baseUrl + '/tvsearch', {},
@@ -40,8 +30,15 @@
 		this.reserve = $resource(_baseUrl + '/resv', {},
 			{
 				get: {method: 'GET'},
+			}
+		);
+
+		this.reserve2 = $resource(_baseUrl + '/resv2', {},
+			{
+				get: {method: 'GET'},
 
 			}
 		);
+
 	}
 })();

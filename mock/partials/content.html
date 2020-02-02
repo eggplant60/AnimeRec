@@ -39,10 +39,15 @@
 									<i class="material-icons" ng-style="{ color: 'grey'}">chat_bubble_outline</i>
 								</md-button>
 								<md-button class="md-icon-button">
-									<i class="material-icons" ng-style="{ color: 'grey'}">repeat</i>
+									<i class="material-icons" ng-style="{ color: 'grey'}">
+										repeat
+									</i>
 								</md-button>
 								<md-button class="md-icon-button">
-									<i class="material-icons" ng-style="{ color: 'grey'}">favorite_border</i>
+									<i class="material-icons" ng-style="{ color: program.is_reserved ? 'red' : 'grey'}"
+										ng-click="ctrl.onReserveButton(program)">
+										favorite_border
+									</i>
 								</md-button>
 								<md-button class="md-icon-button">
 									<i class="material-icons" ng-style="{ color: 'grey'}"

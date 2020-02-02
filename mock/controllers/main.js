@@ -65,12 +65,49 @@ function AppCtrl($scope, $log, $timeout, $filter, $mdDialog, api, common) {
 	// 	}
 	// );
 
+	/*
+	 * 予約ボタン
+	 */
+	vm.onReserveButton = function(program) {
+		$log.debug('on reserve');
+		let param = {
+			area: program.area,
+			sid:  program.service_id,
+			pid:  program.program_id,
+			date: program.start_date,
+			duration: program.duration,
+		};
+		if (program.event_id) { // event_id をバッチで取得済みの場合
+			// @todo
+			param.eid = program.event_id;
+			api.reserve.get(param).$promise.then(
+				(data) => {
+					$log.debug(data);
+					program.is_reserved = true;
+				},
+				(err) => {
+					$log.error(err);
+				}
+			);
+		} else {		
+			api.reserve2.get(param).$promise.then(
+				(data) => {
+					$log.debug(data);
+					program.is_reserved = true;
+				},
+				(err) => {
+					$log.error(err);
+				}
+			);
+		}
+	};
+
 	/* 
 	 * デバッグ用ダイアログ
 	 */
 	vm.openDebugDialog = function(program) {
 		$log.debug('dialog');
-		$log.debug(program);
+		//$log.debug(program);
 		$mdDialog.show({
 			controller: DialogController,
 			templateUrl: 'partials/dialog.html',
@@ -96,6 +133,8 @@ function AppCtrl($scope, $log, $timeout, $filter, $mdDialog, api, common) {
 		}	
 	};
 }
+
+/* -------------- filter  --------------------------- */
 
 function extractDate () {
 	return function(value) {

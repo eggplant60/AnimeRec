@@ -16,25 +16,11 @@
 					{{ program.summary }}
 				</div>
 				<br>
-				<div>
-					deescription: {{ program.description}}
-				</div>
-				<div>
-					チャンネルID: {{ program.service_id }}
-				</div>
-				<div>
-					番組ID: {{ program.program_id}}
-				</div>
-				<div>
-					ジャンルID {{ program.genre_ids}}
-				</div>
-				<div>
-					登録日: {{ program.created_at}}
-				</div>
-				<div>
-					更新日: {{ program.updated_at}}	
-				</div>
-
+				<table>
+					<tr ng-repeat="(key, value) in program">
+						<td>{{ key }}</td><td>:</td><td>{{ value }}</td>
+					</tr>
+				</table>
 			</div>
 		</md-dialog-content>
 
