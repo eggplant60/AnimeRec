@@ -23,6 +23,7 @@ const app = Express();
 const OWN_ENDPOINT = {
 	tvsearch : '/api/tvsearch/',
 	resv     : '/api/resv/',
+	resv2    : '/api/resv2/',
 	schedule : '/api/schedule/' ,
 	eventId  : '/api/eventId/',
 };
@@ -84,6 +85,8 @@ var sendApiCom = function (_method, _url, _args, _parser, ...restArgs) {
 		});
 };
 
+
+
 // リクエストパラメータのチェック(リストにある文字列か？)
 var checkReqParamCand = function (candidates, value) { // candidates[0] がデフォルト値
 	if (!value) {
@@ -115,6 +118,8 @@ var checkReqParamDate = function (defaultValue, value) {
 		return defaultValue;
 	}
 	var casted = new Date(value);
+	console.debug(value);
+	console.debug(casted);
 	if (!isNaN(casted.getTime())) {
 		return casted;
 	} else {
@@ -299,13 +304,21 @@ app.get(OWN_ENDPOINT.schedule, function(req, res){
  * 番組予約API
  * @description
  *   CHAN-TORUのlist APIを叩き、nasneに番組予約
+ * @note
+ *   番組表には eid が存在しないので、先にAPI/DB経由で eid を取得する必要あり
+ * @param
+ *   op: 'add'/'remove'/'modify'
+ *   sid: ex '1024'
+ *   eid: ex  
+ *   category:
+ *   date:     ex '2020-02-04T02:45:00+09:00'
+ * 	 duration: ex '600' [sec]
  */
 app.get(OWN_ENDPOINT.resv, function(req, res){
 	console.log('access: program reservation query.');
-
+	console.log(req.query);
 	// CHAN-TORUに投げるクエリリクエストを生成
 	var query = req.query;
-	//console.log(query);
 	var postParam = {timestamp4p: Date.now()}; // 現在時刻で固定
 	console.log(postParam);
 	var postData = {};
@@ -317,15 +330,15 @@ app.get(OWN_ENDPOINT.resv, function(req, res){
 			sid      : checkReqParamNumber('0', query.sid), // チャンネルID
 			eid      : checkReqParamNumber('0', query.eid), // 番組ID
 			category : checkReqParamCand(['1', '2'], query.category),
-			date     : checkReqParamDateFuck2(defaultDate, query.data), // 必須
+			date     : checkReqParamDateFuck2(defaultDate, query.date), // 必須
 			duration : checkReqParamNumber('1200', query.duration), // 必須
 			// 以下任意
 			//double   : 'on',
 			//title    : '%E3%82%B0%E3%83%83%E3%83%89%E3%83%BB%E3%83%95%E3%82%A1%E3%82%A4%E3%83%88%EF%BC%883%EF%BC%89%E3%80%8C%E7%96%91%E6%83%91%E3%81%AE%E3%83%AA%E3%82%B9%E3%83%88%E3%80%8D', // 任意
-			priority : '1',
-			quality     : checkReqParamNumber('230', query.quality),
-			condition   : checkReqParamCand(['w1', 'w2', 'w3', 'w4', 'w5', 'w6', 'w7'], query.condition),
-			destination : checkReqParamCand(['HDD'], query.destination)
+			//priority : '1',
+			//quality     : checkReqParamNumber('230', query.quality),
+			//condition   : checkReqParamCand(['w1', 'w2', 'w3', 'w4', 'w5', 'w6', 'w7'], query.condition),
+			//destination : checkReqParamCand(['HDD'], query.destination)
 		};
 	} catch (e) {
 		return res.status(400).send('Bad Request: ' + e + '<br>' + JSON.stringify(query));
@@ -352,6 +365,127 @@ app.get(OWN_ENDPOINT.resv, function(req, res){
 		return pretty;
 	}, ...arguments);	
 });
+
+
+/* 
+ * API共通部 Promise版
+ * @note
+ *   EXPRESS自身のエンドポイントにアクセスする場合に使用する
+ * @param
+ *   _method: ex. 'GET'/'POST'
+ *   _url:    APIのエンドポイント
+ *   _url:    URLパラメータ、ヘッダー、POSTデータなど
+ *   _parser: APIによるレスポンスの違いを吸収するための関数
+ */
+var sendApiComPromise = function (_method, _url, _args, _parser) {
+	return new Promise(function (resolve, reject) {
+		clientMethods[_method](_url, _args)
+		.then(	
+			function (val) {
+				console.debug('then');
+				var data = val.data;
+				var response = val.response;
+				response.readable = true; // レスポンスを読み取るために必要
+				
+				if (response.statusCode === 200) { // 200で返ってきたらこちらも200で返す
+					resolve(_parser(data));
+				} else {                           // 200以外で返ってきたら400で返す
+					var decoded = data.toString('utf8');
+					console.error(decoded);
+					reject('No data');
+				}	
+			})
+		.catch(
+			function (error) { // thenで例外発生時
+				console.debug('catch');
+				console.error(error);
+				reject('No data');
+			});
+	});
+};
+
+/* 
+ * 番組予約API 2
+ * @description
+ *   番組表の pid から予約指定できるAPI
+ * @param
+ *   以下が 番組予約API との差分
+ *   - eid
+ *   + pid
+ */
+app.get(OWN_ENDPOINT.resv2, function(req, res){
+	console.log('access: program reservation query2.');
+
+	var postParam = req.query;
+	console.debug(postParam);
+	const localhost = 'http://localhost:' + SERVER_PORT;
+
+	// パラメータチェック
+	if (!postParam.sid || !postParam.pid) {
+		return res.status(400).json({
+			errorCode: 'E002',
+			errorMsg:  'Error: Invalid parameters. "sid" and "pid"' 
+		});
+
+	}
+
+	// eid の取得をしてから番組予約APIを叩く
+	clientMethods['GET'](localhost + OWN_ENDPOINT.eventId, {
+		headers: require(headerPath),
+		parameters: {
+			sid: postParam.sid,
+			pid: postParam.pid,	
+		},
+		// 以下効いていない？
+		requestConfig: {
+			timeout: TIMEOUT
+		},
+		responseConfig: {
+			timeout: TIMEOUT
+		}
+	})
+	.then(function(val) {
+		console.debug('then 2');
+		var data = val.data;
+		var response = val.response;
+		response.readable = true; // レスポンスを読み取るために必要
+
+		var decoded = data.toString('utf8');
+		console.debug(decoded);
+
+		postParam.eid = decoded; // evnetId追加
+
+		var args = {
+			parameters: postParam
+		}
+		sendApiCom('GET', localhost + OWN_ENDPOINT.resv, args, function (resData) {
+			var decoded = resData.toString('utf8');
+			console.debug(decoded);
+			return decoded;
+			//var pretty = JSON.stringify(resData.Result.$, null, ' '); // インデントありで送信
+			//console.debug(pretty);
+			//return pretty;
+		}, req, res);
+		// } else {                           // 200以外で返ってきたら400で返す
+		// 	console.debug('else 2');
+		// 	console.error(decoded);
+		// 	return res.status(400).json({
+		// 		errorCode: 'E003',
+		// 		errorMsg:  'Error in Reseration Query 2.'
+		// 	});
+		// }
+	})
+	.catch(function(error) {
+		console.debug('catch 2');
+		console.error(error);  // 'No eventId' etc.
+		return res.status(500).json({
+			errorCode: 'E004',
+			errorMsg:  'Error in Reseration Query 2.'
+		});
+	});
+
+});
+
 
 
 
