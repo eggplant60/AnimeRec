@@ -118,8 +118,8 @@ var checkReqParamDate = function (defaultValue, value) {
 		return defaultValue;
 	}
 	var casted = new Date(value);
-	console.debug(value);
-	console.debug(casted);
+	//console.debug(value);
+	//console.debug(casted);
 	if (!isNaN(casted.getTime())) {
 		return casted;
 	} else {
@@ -316,7 +316,7 @@ app.get(OWN_ENDPOINT.schedule, function(req, res){
  */
 app.get(OWN_ENDPOINT.resv, function(req, res){
 	console.log('access: program reservation query.');
-	console.log(req.query);
+	
 	// CHAN-TORUに投げるクエリリクエストを生成
 	var query = req.query;
 	var postParam = {timestamp4p: Date.now()}; // 現在時刻で固定
@@ -361,7 +361,7 @@ app.get(OWN_ENDPOINT.resv, function(req, res){
 	// CHAN-TORU へのリクエスト実行
 	sendApiCom('POST', orgUrl.resv, args, function(resData) {
 		var pretty = JSON.stringify(resData.Result.$, null, ' '); // インデントありで送信
-		console.debug(pretty);
+		//console.debug(pretty);
 		return pretty;
 	}, ...arguments);	
 });
@@ -447,33 +447,27 @@ app.get(OWN_ENDPOINT.resv2, function(req, res){
 	.then(function(val) {
 		console.debug('then 2');
 		var data = val.data;
-		var response = val.response;
-		response.readable = true; // レスポンスを読み取るために必要
-
 		var decoded = data.toString('utf8');
-		console.debug(decoded);
-
+		//console.debug(decoded);
 		postParam.eid = decoded; // evnetId追加
-
 		var args = {
-			parameters: postParam
-		}
+			parameters: postParam,
+			// 以下効いていない？
+			requestConfig: {
+				timeout: TIMEOUT
+			},
+			responseConfig: {
+				timeout: TIMEOUT
+			}
+		};
+
+		// @todo
+		//   例外処理
 		sendApiCom('GET', localhost + OWN_ENDPOINT.resv, args, function (resData) {
 			var decoded = resData.toString('utf8');
-			console.debug(decoded);
+			//console.debug(decoded);
 			return decoded;
-			//var pretty = JSON.stringify(resData.Result.$, null, ' '); // インデントありで送信
-			//console.debug(pretty);
-			//return pretty;
 		}, req, res);
-		// } else {                           // 200以外で返ってきたら400で返す
-		// 	console.debug('else 2');
-		// 	console.error(decoded);
-		// 	return res.status(400).json({
-		// 		errorCode: 'E003',
-		// 		errorMsg:  'Error in Reseration Query 2.'
-		// 	});
-		// }
 	})
 	.catch(function(error) {
 		console.debug('catch 2');
