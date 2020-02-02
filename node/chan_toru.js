@@ -209,8 +209,9 @@ app.get(OWN_ENDPOINT.tvsearch, function(req, res){
  * @description
  *   CHAN-TORUのlist APIを叩き、番組詳細画面から event_id を取得
  * @params
- *   sid: ex '1024'
- *   pid: ex '101024202002020315'
+ *   area: ex '23'
+ *   sid:  ex '1024'
+ *   pid:  ex '101024202002020315'
  */
 app.get(OWN_ENDPOINT.eventId, function(req, res){
 	console.log('access: event_id query.');
@@ -223,7 +224,7 @@ app.get(OWN_ENDPOINT.eventId, function(req, res){
 		postParam = {
 			type : 'bytime',
 			cat  : '1', 
-			area : '23',
+			area : checkReqParamNumber(query.area),
 			sid  : checkReqParamNumber(query.sid),
 			pid  : checkReqParamNumber(query.pid),
 			//start: checkReqParamNumber(query.start), // 任意
@@ -421,10 +422,10 @@ app.get(OWN_ENDPOINT.resv2, function(req, res){
 	const localhost = 'http://localhost:' + SERVER_PORT;
 
 	// パラメータチェック
-	if (!postParam.sid || !postParam.pid) {
+	if (!postParam.sid || !postParam.pid || !postParam.area) {
 		return res.status(400).json({
 			errorCode: 'E002',
-			errorMsg:  'Error: Invalid parameters. "sid" and "pid"' 
+			errorMsg:  'Error: Invalid parameters. "sid", "pid", and "area"' 
 		});
 
 	}
@@ -433,6 +434,7 @@ app.get(OWN_ENDPOINT.resv2, function(req, res){
 	clientMethods['GET'](localhost + OWN_ENDPOINT.eventId, {
 		headers: require(headerPath),
 		parameters: {
+			area:postParam.area,
 			sid: postParam.sid,
 			pid: postParam.pid,	
 		},
