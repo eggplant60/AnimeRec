@@ -25,6 +25,7 @@ const sqlTablePrograms = 'CREATE TABLE IF NOT EXISTS programs (' +
 	'original_xml varchar,' +
 	'summary varchar,' +
 	'title varchar' +
+	'is_reserved boolean' +
 	  ');';
 		   
 const sqlIndexPrograms = 

@@ -59,6 +59,7 @@ function sendQuery(path) {
 		item.originalXml,
 		item.summaryStr,
 		item.titleStr,
+		false,
 		];
 	});
 		
