@@ -3,7 +3,7 @@
 const summaryMaxLen = 70;
 
 angular.module('app')
-	.service('CommonService', ['$log', '$filter', function($log, $filter) {
+	.service('CommonService', ['$log', '$filter', '$timeout', 'ApiService', function($log, $filter, $timeout, api) {
 
 		this.roundDate = (date) => {
 			return new Date($filter('date')(date, 'yyyy-MM-dd 05:00:00'));
@@ -33,22 +33,14 @@ angular.module('app')
 				};
 			});
 		};
-
-		// var hex2dec = (hex) => parseInt(hex, 16).toString();
-		// this.updateIsReserved = (programs, schedule) => {
-		// 	schedule.forEach(element => {
-				
-		// 		for (let i=0; i<programs.length; i++) {					
-		// 			if (programs[i].columnDate <= element.startDateObj && 
-		// 				element.startDateObj < this.plus1day(programs[i].columnDate)) {
-		// 				console.debug('aaa----');
-		// 				console.debug(programs[i].columnDate, new Date(element.startDateObj));
-
-		// 			}
-		// 		}
-		// 		//hex2dec(element.eventId)
-		// 	});
-		// };
+		
+		this.mock = () => {
+			return new Promise((resolve, reject) => {
+				$timeout( () => {
+					resolve('Mock is complete.');
+				}, 1000);
+			});
+		};
 
 	}])
 
@@ -83,12 +75,3 @@ angular.module('app')
 			}
 		};
 	});
-
-
-
-	
-
-
-
-
-

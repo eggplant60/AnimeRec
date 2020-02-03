@@ -21,7 +21,6 @@
 		var vm = this;
 		vm.searchEngine='https://google.com/search?q=';
 
-
 		/* 
 		 * ビューの列数を早く確定させたいため、先に番組表の枠を作成する
 		 */
@@ -29,29 +28,33 @@
 		
 		/* 
 		 * DBの予約情報を更新依頼
-		 */
-
+		 */		
+		common.mock()
 		/* 
-		 * 番組表取得
+		 * その後、番組表取得
 		 */
-		for (let i in vm.programList) {
-			let thisDate = vm.programList[i].columnDate;
-			let params = {
-				from    : common.date2str(thisDate),
-				to      : common.date2str(common.plus1day(thisDate)),
-				genreId : genreId
-			};
-			api.tvsearch.get(params).$promise.then(
-				(data) => {
-					//$log.debug(data);
-					vm.programList[i].rowPrograms = data;
-				},
-				(err) => {
-					$log.error(err);
-				}
-			);
-		}
-		$log.debug('complete programs');
+		.then((value) => {
+			$log.debug(value);
+			let promises = [];
+			vm.programList.forEach(element => {
+				let thisDate = element.columnDate;
+				let params = {
+					from    : common.date2str(thisDate),
+					to      : common.date2str(common.plus1day(thisDate)),
+					genreId : genreId
+				};
+				promises.push(api.tvsearch.get(params).$promise);
+			});
+			return Promise.all(promises);
+		})
+		.then((values) => {
+			$log.debug('Complete programList.');
+			for (let i=0; i<nColumns; i++) {
+				$timeout(() => {
+					vm.programList[i].rowPrograms = values[i]; // 一度に更新しようとすると表示されない？
+				});
+			}
+		});
 
 		/* 
 		* 予約一覧取得
