@@ -24,7 +24,7 @@ const sqlTablePrograms = 'CREATE TABLE IF NOT EXISTS programs (' +
 	'link_str varchar,' +
 	'original_xml varchar,' +
 	'summary varchar,' +
-	'title varchar' +
+	'title varchar,' +
 	'is_reserved boolean' +
 	  ');';
 		   
@@ -34,7 +34,8 @@ const sqlIndexPrograms =
 	'CREATE INDEX IF NOT EXISTS idx_programs_03 ON programs (service_id);' +
 	'CREATE INDEX IF NOT EXISTS idx_programs_04 ON programs (genre_ids);' +
 	'CREATE INDEX IF NOT EXISTS idx_programs_05 ON programs (created_at);' +
-	'CREATE INDEX IF NOT EXISTS idx_programs_06 ON programs (updated_at);';
+	'CREATE INDEX IF NOT EXISTS idx_programs_06 ON programs (updated_at);' +
+	'CREATE INDEX IF NOT EXISTS idx_programs_07 ON programs (event_id);';
 
 const sqlTableProgramGenres = 
 	'CREATE TABLE IF NOT EXISTS program_genres (' +
