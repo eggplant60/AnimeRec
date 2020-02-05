@@ -19,7 +19,8 @@
 		const nColumns = 7;
 
 		var vm = this;
-		vm.searchEngine='https://google.com/search?q=';
+		//vm.searchEngine='https://google.com/search?q=';
+		vm.searchEngine='https://google.com/search?tbm=isch&q=';
 
 		/* 
 		 * ビューの列数を早く確定させたいため、先に番組表の枠を作成する
