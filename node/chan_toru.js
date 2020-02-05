@@ -1,31 +1,56 @@
 const restClient = require('node-rest-client-promise').Client;
 const dbClient = require('pg').Client;
 const Express = require('express');
-const dateformat = require('dateformat');
 //const htmlParser = require('node-html-parser');
+const {
+	checkReqParamCand,
+	checkReqParamNumber,
+	checkReqParamDateFuck,
+	checkReqParamDateFuck2,
+	date2Jst,
+} = require('./parameter.js');
 
 // DB関連
 const dbConf = require('../conf/db.json');
 
 // REST関連
-const CHANTORU_ENDPOINT = 'https://tv.so-net.ne.jp/chan-toru';
-const TIMEOUT = 10000; // 10 sec
+const chanToruEndpoint = 'https://tv.so-net.ne.jp/chan-toru';
+const orgUrl  = {
+	tvsearch : chanToruEndpoint + '/tvsearch',
+	list   : chanToruEndpoint + '/list',
+	resv   : chanToruEndpoint + '/resv',
+	detail : chanToruEndpoint + '/detail',
+};
+const timeout = 10000; // 10 sec
 const rest = new restClient();
 var clientMethods = {
-	GET  : rest.getPromise,
-	POST : rest.postPromise,   
+	get  : rest.getPromise,
+	post : rest.postPromise,   
 };
 const headerPath = '../conf/chan_toru.json';
+const defaultArgs = {
+	headers: require(headerPath),
+	requestConfig: {
+		timeout: timeout
+	},
+	responseConfig: {
+		timeout: timeout
+	}
+};
+
 
 // EXPRESS関連
-const SERVER_PORT = 3001;
+const serverPort = 3001;
+const localhost = 'http://localhost:' + serverPort;
 const app = Express();
-const OWN_ENDPOINT = {
+// @todo: リソース名見直す
+const ownEndpoint = {
 	tvsearch : '/api/tvsearch/',
 	resv     : '/api/resv/',
 	resv2    : '/api/resv2/',
 	schedule : '/api/schedule/' ,
 	eventId  : '/api/eventId/',
+	updtresv : '/api/updtresv/'
 };
 app.use((req, res, next) => {   // CORS対応
 	res.header('Access-Control-Allow-Origin', '*');
@@ -35,15 +60,10 @@ app.use((req, res, next) => {   // CORS対応
 	);
 	res.header(
 		'Access-Control-Allow-Methods', 
-		'GET, POST, PUT, DELETE, OPTIONS');
+		'GET, POST, PUT, DELETE, OPTIONS'
+	);
 	next();
 });
-const orgUrl  = {
-	tvsearch : CHANTORU_ENDPOINT + '/tvsearch',
-	list   : CHANTORU_ENDPOINT + '/list',
-	resv   : CHANTORU_ENDPOINT + '/resv',
-	detail : CHANTORU_ENDPOINT + '/detail',
-};
 
 
 /* 
@@ -86,64 +106,49 @@ var sendApiCom = function (_method, _url, _args, _parser, ...restArgs) {
 };
 
 
+/* 
+ * 予約フラグ更新API
+ * @description
+ *   PostgreSQLのprogramsテーブルのis_reservedを更新
+ * @param
+ * @todo
+ */
+app.get(ownEndpoint.updtresv, function(req, res){
+	console.log('access: reservation update query.');
 
-// リクエストパラメータのチェック(リストにある文字列か？)
-var checkReqParamCand = function (candidates, value) { // candidates[0] がデフォルト値
-	if (!value) {
-		return candidates[0];
-	}
-	if (candidates.includes(value)) {
-		return value;
-	} else {
-		throw 'Invalid query, type=cand.';
-	}
-};
+	// @todo 予約一覧API終了後に移す
+	let db = new dbClient(dbConf); 
+	db.connect();
 
-// リクエストパラメータのチェック(整数型か？)
-var checkReqParamNumber = function (defaultValue, value) {
-	if (!value) {
-		return defaultValue;
-	}
-	var casted = Number(value); // 整数にできない文字列ならばNaNになる
-	if (!isNaN(casted)) {
-		return value;
-	} else {
-		throw 'Invalid query, type=number.';
-	}
-};
+	// 予約一覧APIにアクセス
+	clientMethods.get(localhost + ownEndpoint.schedule, {})
+	.then((val) => {
+		var data = val.data;
+		var reservations = JSON.parse(data.toString('utf8'));
+		//console.debug(reservations);
 
-// リクエストパラメータのチェック(パース可能であればDate型で返す)
-var checkReqParamDate = function (defaultValue, value) {
-	if (!value) {
-		return defaultValue;
-	}
-	var casted = new Date(value);
-	//console.debug(value);
-	//console.debug(casted);
-	if (!isNaN(casted.getTime())) {
-		return casted;
-	} else {
-		throw 'Invalid query, type=date';
-	}
-};
-
-// YYYYmmddhhssffで返す
-var checkReqParamDateFuck = function (defaultValue, value) {
-	return date2YYYYmmddhhss(checkReqParamDate(defaultValue, value));
-};
-
-var checkReqParamDateFuck2 = function (defaultValue, value) {
-	return date2Jst(checkReqParamDate(defaultValue, value));
-};
-
-var date2YYYYmmddhhss = function (date) {
-	return dateformat(date, 'yyyymmddHHMMss');
-};
-
-var date2Jst = function (date) {
-	return dateformat(date, 'yyyy-mm-dd"T"HH:MM:ss+09:00');
-};
-
+		var eventIds = reservations.map(element => {
+			return parseInt(element.eventId, 16).toString();
+		});
+		var sql = 'UPDATE programs SET is_reserved = false WHERE start_date >= CURRENT_TIMESTAMP;';
+		sql += "UPDATE programs SET is_reserved = true WHERE event_id IN ('" +
+				eventIds.join("','") + "');";
+		console.debug(sql);
+		return db.query(sql);
+	})
+	.then(resSql => {
+		console.debug(resSql);
+		return res.status(200).send();
+	})
+	.catch(e => {
+		console.error(e.stack);
+		return res.status(500).json({
+			errorCode: 'E022',
+			errorMsg:  'Error: Update failed.'
+		});
+	})
+	.finally(() => {db.end();});
+});
 
 /* 
  * 番組表取得API
@@ -157,7 +162,7 @@ var date2Jst = function (date) {
  * 	 パラメータのチェック
  *   DBクライアントのオブジェクトの再利用
  */
-app.get(OWN_ENDPOINT.tvsearch, function(req, res){
+app.get(ownEndpoint.tvsearch, function(req, res){
 	console.log('access: program list query.');
 
 	let db = new dbClient(dbConf); 
@@ -213,7 +218,7 @@ app.get(OWN_ENDPOINT.tvsearch, function(req, res){
  *   sid:  ex '1024'
  *   pid:  ex '101024202002020315'
  */
-app.get(OWN_ENDPOINT.eventId, function(req, res){
+app.get(ownEndpoint.eventId, function(req, res){
 	console.log('access: event_id query.');
 
 	// CHAN-TORUに投げるクエリリクエストを生成
@@ -236,25 +241,13 @@ app.get(OWN_ENDPOINT.eventId, function(req, res){
 	}
 	console.debug(postParam);
 
-	var args = {
-		headers: require(headerPath),
-		parameters: postParam,
-		// 以下効いていない？
-		requestConfig: {
-			timeout: TIMEOUT
-		},
-		responseConfig: {
-			timeout: TIMEOUT
-		}
-	};
+	var args = JSON.parse(JSON.stringify(defaultArgs));
+	args.parameters = postParam;
 
 	// CHAN-TORU へのリクエスト実行
-	sendApiCom('POST', orgUrl.detail, args, function (resData) {
-		//console.log(typeof resData); // object
+	sendApiCom('post', orgUrl.detail, args, function (resData) {
 		var decoded = resData.toString('utf8');
-		//console.log(decoded);
 		var eid = decoded.match(/eid=([0-9]+)&/)[1];
-		//console.log(eid);
 		return eid;
 	}, ...arguments);
 });
@@ -266,7 +259,7 @@ app.get(OWN_ENDPOINT.eventId, function(req, res){
  * @params
  *   
  */
-app.get(OWN_ENDPOINT.schedule, function(req, res){
+app.get(ownEndpoint.schedule, function(req, res){
 	console.log('access: reservation list query.');
 
 	// CHAN-TORUに投げるクエリリクエストを生成
@@ -280,21 +273,11 @@ app.get(OWN_ENDPOINT.schedule, function(req, res){
 		type:    'manual', // 'all' との違いは不明
 	};
 
-	var args = {
-		headers: require(headerPath),
-		//data: {},
-		parameters: postParam,
-		// 以下効いていない？
-		requestConfig: {
-			timeout: TIMEOUT
-		},
-		responseConfig: {
-			timeout: TIMEOUT
-		}
-	};
+	var args = JSON.parse(JSON.stringify(defaultArgs));
+	args.parameters = postParam;
 
 	// CHAN-TORU へのリクエスト実行
-	sendApiCom('POST', orgUrl.list, args, function (resData) {
+	sendApiCom('post', orgUrl.list, args, function (resData) {
 		//console.log(typeof resData); // object
 		var pretty = JSON.stringify(resData.list, null, ' '); // インデントありで送信
 		return pretty;
@@ -315,7 +298,7 @@ app.get(OWN_ENDPOINT.schedule, function(req, res){
  *   date:     ex '2020-02-04T02:45:00+09:00'
  * 	 duration: ex '600' [sec]
  */
-app.get(OWN_ENDPOINT.resv, function(req, res){
+app.get(ownEndpoint.resv, function(req, res){
 	console.log('access: program reservation query.');
 	
 	// CHAN-TORUに投げるクエリリクエストを生成
@@ -346,64 +329,17 @@ app.get(OWN_ENDPOINT.resv, function(req, res){
 	}
 	console.log(postData);
 
-	var args = {
-		headers: require(headerPath),
-		data: postData,
-		parameters: postParam,
-		// 以下効いていない？
-		requestConfig: {
-			timeout: TIMEOUT
-		},
-		responseConfig: {
-			timeout: TIMEOUT
-		}
-	};
-
+	var args = JSON.parse(JSON.stringify(defaultArgs));
+	args.parameters = postParam;
+	args.data = postData;
+	
 	// CHAN-TORU へのリクエスト実行
-	sendApiCom('POST', orgUrl.resv, args, function(resData) {
+	sendApiCom('post', orgUrl.resv, args, function(resData) {
 		var pretty = JSON.stringify(resData.Result.$, null, ' '); // インデントありで送信
-		//console.debug(pretty);
 		return pretty;
 	}, ...arguments);	
 });
 
-
-/* 
- * API共通部 Promise版
- * @note
- *   EXPRESS自身のエンドポイントにアクセスする場合に使用する
- * @param
- *   _method: ex. 'GET'/'POST'
- *   _url:    APIのエンドポイント
- *   _url:    URLパラメータ、ヘッダー、POSTデータなど
- *   _parser: APIによるレスポンスの違いを吸収するための関数
- */
-var sendApiComPromise = function (_method, _url, _args, _parser) {
-	return new Promise(function (resolve, reject) {
-		clientMethods[_method](_url, _args)
-		.then(	
-			function (val) {
-				console.debug('then');
-				var data = val.data;
-				var response = val.response;
-				response.readable = true; // レスポンスを読み取るために必要
-				
-				if (response.statusCode === 200) { // 200で返ってきたらこちらも200で返す
-					resolve(_parser(data));
-				} else {                           // 200以外で返ってきたら400で返す
-					var decoded = data.toString('utf8');
-					console.error(decoded);
-					reject('No data');
-				}	
-			})
-		.catch(
-			function (error) { // thenで例外発生時
-				console.debug('catch');
-				console.error(error);
-				reject('No data');
-			});
-	});
-};
 
 /* 
  * 番組予約API 2
@@ -414,12 +350,11 @@ var sendApiComPromise = function (_method, _url, _args, _parser) {
  *   - eid
  *   + pid
  */
-app.get(OWN_ENDPOINT.resv2, function(req, res){
+app.get(ownEndpoint.resv2, function(req, res){
 	console.log('access: program reservation query2.');
 
 	var postParam = req.query;
 	console.debug(postParam);
-	const localhost = 'http://localhost:' + SERVER_PORT;
 
 	// パラメータチェック
 	if (!postParam.sid || !postParam.pid || !postParam.area) {
@@ -427,47 +362,30 @@ app.get(OWN_ENDPOINT.resv2, function(req, res){
 			errorCode: 'E002',
 			errorMsg:  'Error: Invalid parameters. "sid", "pid", and "area"' 
 		});
-
 	}
 
+	var args = JSON.parse(JSON.stringify(defaultArgs));
+	args.parameters = {
+		area:postParam.area,
+		sid: postParam.sid,
+		pid: postParam.pid,	
+	};
+
 	// eid の取得をしてから番組予約APIを叩く
-	clientMethods['GET'](localhost + OWN_ENDPOINT.eventId, {
-		headers: require(headerPath),
-		parameters: {
-			area:postParam.area,
-			sid: postParam.sid,
-			pid: postParam.pid,	
-		},
-		// 以下効いていない？
-		requestConfig: {
-			timeout: TIMEOUT
-		},
-		responseConfig: {
-			timeout: TIMEOUT
-		}
-	})
+	clientMethods.get(localhost + ownEndpoint.eventId, args)
 	.then(function(val) {
 		console.debug('then 2');
 		var data = val.data;
 		var decoded = data.toString('utf8');
 		//console.debug(decoded);
 		postParam.eid = decoded; // evnetId追加
-		var args = {
-			parameters: postParam,
-			// 以下効いていない？
-			requestConfig: {
-				timeout: TIMEOUT
-			},
-			responseConfig: {
-				timeout: TIMEOUT
-			}
-		};
+		var args = JSON.parse(JSON.stringify(defaultArgs));
+		args.parameters = postParam;
 
 		// @todo
 		//   例外処理
-		sendApiCom('GET', localhost + OWN_ENDPOINT.resv, args, function (resData) {
+		sendApiCom('get', localhost + ownEndpoint.resv, args, function (resData) {
 			var decoded = resData.toString('utf8');
-			//console.debug(decoded);
 			return decoded;
 		}, req, res);
 	})
@@ -483,9 +401,7 @@ app.get(OWN_ENDPOINT.resv2, function(req, res){
 });
 
 
-
-
-var server = app.listen(SERVER_PORT, function () {
+var server = app.listen(serverPort, function () {
 	var addr = this.address();
 	console.log('Node.js is listening to localhost:' + addr.port);
 });
