@@ -44,7 +44,7 @@
 					to      : common.date2str(common.plus1day(thisDate)),
 					genreId : genreId
 				};
-				promises.push(api.tvsearch.get(params).$promise);
+				promises.push(api.programs.get(params).$promise);
 			});
 			return Promise.all(promises);
 		})
@@ -75,7 +75,8 @@
 		*/
 		vm.onReserveButton = function(program) {
 			$log.debug('on reserve');
-			let param = {
+			let postData = {
+				op: 'add',
 				area: program.area,
 				sid:  program.service_id,
 				pid:  program.program_id,
@@ -84,8 +85,8 @@
 			};
 			if (program.event_id) { // event_id をバッチで取得済みの場合
 				// @todo
-				param.eid = program.event_id;
-				api.reserve.get(param).$promise.then(
+				postData.eid = program.event_id;
+				api.reservations.post(postData).$promise.then(
 					(data) => {
 						$log.debug(data);
 						program.is_reserved = true;

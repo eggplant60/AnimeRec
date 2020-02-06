@@ -14,31 +14,16 @@
 			resv2    : {}
 		};
 
-		this.tvsearch = $resource(_baseUrl + '/tvsearch', {},
+		this.programs = $resource(_baseUrl + '/programs/', {},
 			{
 				get: {method: 'GET', isArray: true}
 			}
 		);
 
-		this.schedule = $resource(_baseUrl + '/schedule', {},
+		this.reservations = $resource(_baseUrl + '/reservations', {},
 			{
-				get: {method: 'GET', isArray: true},
-
+				post: {method: 'POST'}
 			}
 		);
-
-		this.reserve = $resource(_baseUrl + '/resv', {},
-			{
-				get: {method: 'GET'},
-			}
-		);
-
-		this.reserve2 = $resource(_baseUrl + '/resv2', {},
-			{
-				get: {method: 'GET'},
-
-			}
-		);
-
 	}
 })();
