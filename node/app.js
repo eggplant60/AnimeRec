@@ -48,7 +48,7 @@ app.use(Express.urlencoded({ extended: true }));
 // @todo: リソース名見直す
 const expressEndpoint = {
 	eid      : '/api/programs/eid/',   // post
-	search   : '/api/programs/list/',  // get
+	search   : '/api/programs/',       // get
 	resv     : '/api/reservations/',   // post, 一覧取得, 予約, 削除, 更新
 };
 app.use((req, res, next) => {   // CORS対応
