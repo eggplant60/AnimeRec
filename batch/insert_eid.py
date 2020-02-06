@@ -3,7 +3,6 @@
 
 import psycopg2   # handle PostgreSQL
 import json
-#import subprocess
 from time import sleep
 from datetime import datetime
 import requests
@@ -23,25 +22,24 @@ eid更新の条件
 
 target_genre = '107100'
 sleep_sec = 3
-url_api = 'http://localhost:3001/api/eventId'
+url_api = 'http://localhost:3001/api/programs/eid'
+conf_path = '../conf/db.json'
 
 def get_event_id(area, sid, pid):
-    response = requests.get(url_api, params={'area': area, 'sid': sid, 'pid': pid})
+    response = requests.post(url_api, data={'area': area, 'sid': sid, 'pid': pid})
     #import pdb; pdb.set_trace()
     r_body = response.json()
     print(r_body)
+    print(type(r_body))
     if (response.status_code == 200):
-        return r_body # int
+        return r_body['eid'] # str
     else:
         return None
 
 if __name__ == '__main__':
     # 設定の読み込み
-    conf_path = '../conf/db.json'
     with open(conf_path, 'r') as f:
         conf = json.load(f)
-
-    #print(conf)
     
     with psycopg2.connect(
             host = conf['host'],
@@ -52,10 +50,6 @@ if __name__ == '__main__':
         
         with conn.cursor() as cur:
 
-            #row = subprocess.check_output(['./speedtest-cli', '--csv']).decode()
-            #data = tuple([c.lower().replace(' ', '_') for c in row.strip().split(',')])
-
-            #import pdb; pdb.set_trace()
             today_str = datetime.now().strftime('%Y-%m-%d') # 日付
             now_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S') # 現在
             cur.execute(
