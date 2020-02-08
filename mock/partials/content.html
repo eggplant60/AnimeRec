@@ -44,14 +44,14 @@
 									</i>
 								</md-button>
 								<md-button class="md-icon-button">
-									<i class="material-icons" ng-style="{ color: program.is_reserved ? 'red' : 'grey'}"
+									<i class="material-icons" ng-style="{ color: program.item_id ? 'red' : 'grey'}"
 										ng-click="ctrl.onReserveButton(program)">
 										favorite_border
 									</i>
 								</md-button>
 								<md-button class="md-icon-button">
 									<i class="material-icons" ng-style="{ color: 'grey'}"
-											ng-click="ctrl.openDebugDialog(program)">
+											ng-click="ctrl.openDialog(program)">
 										more_horiz
 									</i>
 								</md-button>
