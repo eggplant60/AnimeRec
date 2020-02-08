@@ -198,4 +198,11 @@ angular.module('app')
 				return value;
 			}
 		};
+	})
+	.filter('recFilter', () => (program) => {
+		if (program.item_id) {
+			return true;
+		} else {
+			return false;
+		}
 	});

@@ -20,7 +20,9 @@
 }
 
 .sidebar-button {
-	margin-bottom: 20px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	color: dodgerblue;
 }
 
 .dow-column {

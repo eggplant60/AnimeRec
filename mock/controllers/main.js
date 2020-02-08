@@ -24,11 +24,13 @@
 		vm.programList = common.createEmptyProgramList(nColumns);
 		vm.reservations = [];
 		vm.inProcess = true;
+		vm.allShow = true;
 		
 		/* 
 		 * 番組表取得
 		 */
 		function initReload() {
+			$log.debug('reload');
 			common.reload(vm.programList, genreId)
 			.then((values) => {
 				$log.debug('reload: get programList.');
@@ -49,6 +51,7 @@
 		* 予約一覧取得を並行して動かす
 		*/
 		function mergeReserve() {
+			$log.debug('merge');
 			api.reservations.list().$promise
 			.then((data) => {
 				$log.debug('merge: get reservations.');
@@ -97,5 +100,33 @@
 		* デバッグ用ダイアログ
 		*/
 		vm.openDialog = common.openDialog;
+
+		/* 
+		 * フィルターボタン
+		 */
+		vm.onFilter = () => {
+			$log.debug('on filter');
+			vm.allShow = !vm.allShow;
+		};
+
+		vm.recFilter = (program) => {
+			return vm.allShow || program.item_id;
+		};
+
+		/* 
+		 * リフレッシュボタン
+		 */
+		vm.onRefresh = () => {
+			$log.debug('on reflesh');
+			initReload();
+			mergeReserve();
+		};
+
+		/* 
+		 * 録画設定ボタン
+		 */
+		vm.onSettings = () => {
+			console.debug('on settings');
+		};		
 	}
 })();
