@@ -19,7 +19,6 @@ const orgUrl  = {
 	tvsearch : chanToruEndpoint + '/tvsearch',
 	list   : chanToruEndpoint + '/list',
 	resv   : chanToruEndpoint + '/resv',
-	detail : chanToruEndpoint + '/detail',
 };
 const timeout = 10000; // 10 sec
 const rest = new restClient();
@@ -45,11 +44,10 @@ const localhost = 'http://localhost:' + serverPort;
 const app = Express();
 app.use(Express.json());
 app.use(Express.urlencoded({ extended: true }));
-// @todo: リソース名見直す
 const expressEndpoint = {
-	eid      : '/api/programs/eid/',   // post
-	search   : '/api/programs/',       // get
-	resv     : '/api/reservations/',   // post, 一覧取得, 予約, 削除, 更新
+	search   : '/api/programs/',       // get = 一覧取得
+	resv     : '/api/reservations/',   // post = [一覧取得, 予約, 削除, 更新]
+	//merge    : '/api/merges/',         // post = 結合
 };
 app.use((req, res, next) => {   // CORS対応
 	res.header('Access-Control-Allow-Origin', '*');
@@ -67,130 +65,58 @@ app.use((req, res, next) => {   // CORS対応
 /* --------------------- CHAN-TORU -------------------------------- */
 
 /* 
- * 1. event_id取得API
- * @description
- *   CHAN-TORUのlist APIを叩き、番組詳細画面から event_id を取得
- * @note
- *   バッチ処理もしくは自分自身で使用。基本的にはクライアント側から直接実行しない
- * @method
- *   post
- * @body
- * {
- *   "area": '23',
- *   "sid" : '1024',
- *   "pid" : '101024202002020315',
- * }
- */
-app.post(expressEndpoint.eid, (req, res) => {
-	console.log('API01: Access to ' + expressEndpoint.eid);
-
-	// CHAN-TORUに投げるクエリリクエストを生成
-	//var query = req.query;
-	var body = req.body;
-	console.log(body);
-	var postParam = {};
-
-	try {
-		postParam = {
-			type : 'bytime',
-			cat  : '1', 
-			area : checkReqParamNumber(body.area),
-			sid  : checkReqParamNumber(body.sid),
-			pid  : checkReqParamNumber(body.pid),
-			//start: checkReqParamNumber(body.start), // 任意
-			//end  : checkReqParamNumber(body.end), // 任意
-			//timestamp4p:
-		};
-	} catch (e) {
-		console.log('API01: Invalid paramters.' + e);
-		return res.status(400).json({
-			errorCode : 'E010',
-			errorMsg  : 'Invalid paramters. ' + e,
-			parameters: query
-		});
-	}
-	console.log(postParam);
-	
-	var args = JSON.parse(JSON.stringify(defaultArgs));
-	args.parameters = postParam;
-
-	// CHAN-TORU へのリクエスト実行
-	clientMethods.post(orgUrl.detail, args)
-	.then((val) => {
-		console.log('API01: then');
-		var data = val.data;
-		var decoded = data.toString('utf8');
-
-		val.response.readable = true;
-		var statusCode = val.response.statusCode;
-
-		if (statusCode === 200) { // 200で返ってきたらこちらも200で返す
-			// 番組が放送済みでもそうでなくてもHTMLが返ってくる
-			try {
-				var eid = decoded.match(/eid=([0-9]+)&/)[1];
-				return res.status(200).json({eid: eid});
-			} catch (e) {
-				return res.status(203).json();
-			}
-		} else {                  // 200以外で返ってきたらそのまま返す
-			console.error(decoded);
-			return res.status(statusCode).send(decoded);
-		}
-	})
-	.catch((error) => { // thenで例外発生時
-		console.error('API01: catch');
-		console.error(error);
-		return res.status(500).json({
-			errorCode: 'E011',
-			errorMsg:  'System error.'
-		});
-	});
-});
-
-/* 
  * 2. 番組予約操作 API
  * @description
- *   CHAN-TORUのlist APIを叩き、nasneの予約一覧取得・追加・削除・更新
+ *   CHAN-TORUのlist APIを叩き、nasneの予約一覧取得/追加/更新/削除
  * @note
  *   実態は各関数参照
  * @method
  *   post
+ * @param
+ *   op: 'list'/'add'/'remove'/'update'
  * @body
  * 
  * 予約一覧(list)
- * {
- * 	 "op" : "list",
- * }
+ * {}
  * 
  * 予約追加(add)
  * {
- * 	 "op" : "add",
  *   "sid": "1040",
  *   "eid": "6879",
  *   "category": "1",
  *   "date":  "2020-02-07T02:34:00+09:00",
  * 	 "duration": "4500"
  * }
- * /'remove'/'modify'
+ * 
+ * 予約削除(remove)
+ * {
+ *   "item_id" : "...",
+ *   "drv_id"  : "..."
+ * }
+ * 
+ * 予約更新(modify)
  */
 app.post(expressEndpoint.resv, (req, res) => {
 	console.log('API02: Access to ' + expressEndpoint.resv);
+	var param = req.query;
 	var body = req.body;
+	console.log(param);
 	console.log(body);
 
-	switch (body.op) {
+	switch (param.op) {
 	case 'list':
 		return listReservations(req, res);
 	case 'add':
 		return addReservation(req, res);
+	case 'remove':
+		return removeReservation(req, res);
 	case 'update':
-		//return
-	case 'delete':
 		//
 	default:
+		console.log('API02: Invalid body. op = ' + param.op);
 		return res.status(400).json({
 			errorCode: 'E020',
-			errorMsg:  'Invalid body. '
+			errorMsg:  'Invalid body. op = ' + param.op
 		});
 	}
 });
@@ -297,7 +223,7 @@ function addReservation(req, res) {
 	var args = JSON.parse(JSON.stringify(defaultArgs));
 	args.parameters = postParam;
 	args.data = postData;
-	
+
 	// CHAN-TORU へのリクエスト実行
 	clientMethods.post(orgUrl.resv, args)
 	.then((val) => {
@@ -344,110 +270,85 @@ function addReservation(req, res) {
 	});
 }
 
-
 /* 
- * 4. 番組予約API 2
+ * 2-c. 予約削除 関数
  * @description
- *   番組表の pid から予約指定できるAPI
+ *   CHAN-TORUのlist APIを叩き、nasneの予約削除
+ * @note
+ *   
  * @param
- *   以下が 番組予約API との差分
- *   - eid
- *   + pid
  */
-// app.post(expressEndpoint.resv2, function(req, res){
-// 	console.log('access: program reservation query2.');
+function removeReservation(req, res) {
+	console.log('removeReservation()');
+	
+	// CHAN-TORUに投げるクエリリクエストを生成
+	var body = req.body;
+	var postParam = {}; // 現在時刻で固定
 
-// 	var postParam = req.query;
-// 	console.debug(postParam);
+	try {
+		postParam = {
+			timestamp4p: Date.now(),
+			op       : 'remove',
+			resp     : 'xml',  // 'json'はないらしい
+			type     : 'manual',
+			item     : checkReqParamNumber('0', body.item_id),
+			dvrId    : body.dvr_id,
+		};
+	} catch (e) {
+		console.log('removeReservation(): Invalid body. ' + JSON.stringify(e));
+		return res.status(400).json({
+			errorCode: 'E024',
+			errorMsg:  'Invalid body.',
+			body: postParam,
+		});
+	}
+	console.log(postParam);
 
-// 	// パラメータチェック
-// 	if (!postParam.sid || !postParam.pid || !postParam.area) {
-// 		return res.status(400).json({
-// 			errorCode: 'E040',
-// 			errorMsg:  'Error: Invalid parameters. "sid", "pid", and "area"' 
-// 		});
-// 	}
+	var args = JSON.parse(JSON.stringify(defaultArgs));
+	args.parameters = postParam;
+	
+	// CHAN-TORU へのリクエスト実行
+	clientMethods.post(orgUrl.resv, args)
+	.then((val) => {
+		console.log('removeReservation(): then');
+		var data = val.data;
+		
+		val.response.readable = true;
+		var statusCode = val.response.statusCode;
 
-// 	var args = JSON.parse(JSON.stringify(defaultArgs));
-// 	args.parameters = {
-// 		area:postParam.area,
-// 		sid: postParam.sid,
-// 		pid: postParam.pid,	
-// 	};
-
-// 	// eid の取得をしてから番組予約APIを叩く
-// 	clientMethods.get(localhost + expressEndpoint.eventId, args)
-// 	.then(function(val) {
-// 		console.debug('then 2');
-// 		var data = val.data;
-// 		var decoded = data.toString('utf8');
-// 		//console.debug(decoded);
-// 		postParam.eid = decoded; // evnetId追加
-// 		var args = JSON.parse(JSON.stringify(defaultArgs));
-// 		args.parameters = postParam;
-
-// 		// @todo
-// 		//   例外処理
-// 		sendApiCom('get', localhost + expressEndpoint.resv, args, function (resData) {
-// 			var decoded = resData.toString('utf8');
-// 			return decoded;
-// 		}, req, res);
-// 	})
-// 	.catch(function(error) {
-// 		console.debug('catch 2');
-// 		console.error(error);  // 'No eventId' etc.
-// 		return res.status(500).json({
-// 			errorCode: 'E041',
-// 			errorMsg:  'Error:  Reseration query 2 failed.'
-// 		});
-// 	});
-
-// });
-
-/* 
- * 5. 予約フラグ更新API
- * @description
- *   PostgreSQLのprogramsテーブルのis_reservedを更新
- * @param
- * @todo
- */
-// app.post(expressEndpoint.updtresv, function(req, res){
-// 	console.log('access: reservation update query.');
-
-// 	// @todo 予約一覧API終了後に移す
-// 	let db = new dbClient(dbConf); 
-// 	db.connect();
-
-// 	// 予約一覧APIにアクセス
-// 	clientMethods.get(localhost + expressEndpoint.schedule, {})
-// 	.then((val) => {
-// 		var data = val.data;
-// 		var reservations = JSON.parse(data.toString('utf8'));
-// 		//console.debug(reservations);
-
-// 		var eventIds = reservations.map(element => {
-// 			return parseInt(element.eventId, 16).toString();
-// 		});
-// 		var sql = 'UPDATE programs SET is_reserved = false WHERE start_date >= CURRENT_TIMESTAMP;';
-// 		sql += "UPDATE programs SET is_reserved = true WHERE event_id IN ('" +
-// 				eventIds.join("','") + "');";
-// 		console.debug(sql);
-// 		return db.query(sql); // Promise
-// 	})
-// 	.then(resSql => {
-// 		console.debug(resSql);
-// 		return res.status(200).send();
-// 	})
-// 	.catch(e => {
-// 		console.error(e.stack);
-// 		return res.status(500).json({
-// 			errorCode: 'E050',
-// 			errorMsg:  'Error: Update of is_reserved failed.'
-// 		});
-// 	})
-// 	.finally(() => {db.end();});
-// });
-
+		if (statusCode === 200) { // 200で返ってきたらこちらも200で返す
+			/*
+			[成功時]
+				<?xml version="1.0" encoding="utf-8" ?>
+				<Result responseCode="0" responseMsg="削除しました"/>
+			*/
+			console.log('removeReservation(): success.');
+			return res.status(200).json();
+		} else {                  // 200以外で返ってきたら500で返す
+			/*
+			[失敗時]
+				"responseCode": "803",
+				"responseMsg": "録画できない放送局を指定したか、既に終了した番組のため、予約に失敗しました",
+				"isListCapability": "true",
+				"dateTime": "2020-02-07T02:34:00+09:00",
+				"dateTime1970": "1581010440000",
+				"sid": "104",
+				"duration": "1200000"
+			*/
+			console.log('removeReservation(): failed.');
+			return res.status(500).json();
+		}
+	})
+	.catch((error) => { // thenで例外発生時
+		console.error('removeReservation(): catch');
+		console.error(error);
+		return res.status(500).json({
+			errorCode: 'E025',
+			errorMsg:  'System error.'
+		});
+	});
+}
+	
 /* 
  * 6. 番組表取得API
  * @description
@@ -461,7 +362,7 @@ function addReservation(req, res) {
  *   DBクライアントのオブジェクトの再利用
  */
 app.get(expressEndpoint.search, function(req, res){
-	console.log('API06: access to '+ expressEndpoint.programs);
+	console.log('API06: access to '+ expressEndpoint.search);
 
 	let db = new dbClient(dbConf); 
 	db.connect();
@@ -507,6 +408,54 @@ app.get(expressEndpoint.search, function(req, res){
 
 });
 
+
+/* 
+ * 7. 予約フラグ更新API
+ * @description
+ *   PostgreSQLのprogramsテーブルのis_reservedを更新
+ * @param
+ * @todo
+ */
+// app.post(expressEndpoint.merge, function(req, res){
+// 	console.log('API07: access to ' + expressEndpoint.merge);
+
+// 	// @todo 予約一覧API終了後に移す
+// 	let db = new dbClient(dbConf); 
+// 	db.connect();
+
+// 	// 予約一覧APIにアクセス
+// 	clientMethods.post(localhost + expressEndpoint.reservations, {parameters: {op: 'list'}})
+// 	.then((val) => {
+// 		var data = val.data;
+// 		var reservations = JSON.parse(data.toString('utf8'));
+// 		//console.log(reservations);
+
+// 		var eventIds = reservations.map(element => {
+// 			return parseInt(element.eventId, 16).toString();
+// 		});
+// 		var sql = 'UPDATE programs SET is_reserved = false WHERE start_date >= CURRENT_TIMESTAMP;';
+// 		if (eventIds.length > 1) {
+// 			sql += "UPDATE programs SET is_reserved = true" +
+// 					"WHERE start_date >= CURRENT_TIMESTAMP AND event_id IN ('" +
+// 					eventIds.join("','") + "');";
+// 		}
+// 		console.log('API07: ' + sql);
+// 		return db.query(sql); // Promise
+// 	})
+// 	.then(resSql => {
+// 		console.log('API07: then');
+// 		return res.status(200).send();
+// 	})
+// 	.catch(e => {
+// 		console.error('API07: catch');
+// 		console.error(e.stack);
+// 		return res.status(500).json({
+// 			errorCode: 'E070',
+// 			errorMsg:  'Error: Update of is_reserved failed.'
+// 		});
+// 	})
+// 	.finally(() => {db.end();});
+// });
 
 
 var server = app.listen(serverPort, function () {
