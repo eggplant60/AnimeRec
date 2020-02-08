@@ -1,7 +1,6 @@
 const restClient = require('node-rest-client-promise').Client;
 const dbClient = require('pg').Client;
 const Express = require('express');
-//const bodyParser = require('body-parser');
 const {
 	checkReqParamCand,
 	checkReqParamNumber,
@@ -14,18 +13,14 @@ const {
 const dbConf = require('../conf/db.json');
 
 // REST関連
-const chanToruEndpoint = 'https://tv.so-net.ne.jp/chan-toru';
-const orgUrl  = {
-	tvsearch : chanToruEndpoint + '/tvsearch',
-	list   : chanToruEndpoint + '/list',
-	resv   : chanToruEndpoint + '/resv',
+const chanToruUrl = 'https://tv.so-net.ne.jp/chan-toru';
+const restEndpoint  = {
+	tvsearch : chanToruUrl + '/tvsearch',
+	list   : chanToruUrl + '/list',
+	resv   : chanToruUrl + '/resv',
 };
 const timeout = 10000; // 10 sec
 const rest = new restClient();
-var clientMethods = {
-	get  : rest.getPromise,
-	post : rest.postPromise,   
-};
 const headerPath = '../conf/chan_toru.json';
 const defaultArgs = {
 	headers: require(headerPath),
@@ -37,7 +32,6 @@ const defaultArgs = {
 	}
 };
 
-
 // EXPRESS関連
 const serverPort = 3001;
 const localhost = 'http://localhost:' + serverPort;
@@ -47,7 +41,6 @@ app.use(Express.urlencoded({ extended: true }));
 const expressEndpoint = {
 	search   : '/api/programs/',       // get = 一覧取得
 	resv     : '/api/reservations/',   // post = [一覧取得, 予約, 削除, 更新]
-	//merge    : '/api/merges/',         // post = 結合
 };
 app.use((req, res, next) => {   // CORS対応
 	res.header('Access-Control-Allow-Origin', '*');
@@ -110,8 +103,6 @@ app.post(expressEndpoint.resv, (req, res) => {
 		return addReservation(req, res);
 	case 'remove':
 		return removeReservation(req, res);
-	case 'update':
-		//
 	default:
 		console.log('API02: Invalid body. op = ' + param.op);
 		return res.status(400).json({
@@ -129,12 +120,8 @@ app.post(expressEndpoint.resv, (req, res) => {
  * @params
  *   なし
  */
-//app.post(expressEndpoint.schedule, function(req, res){
 function listReservations(req, res) {
 	console.log('listReservations()');
-
-	// CHAN-TORUに投げるクエリリクエストを生成
-	//var body = req.body;
 
 	postParam = {
 		command: 'schedule',
@@ -147,8 +134,8 @@ function listReservations(req, res) {
 	var args = JSON.parse(JSON.stringify(defaultArgs));
 	args.parameters = postParam;
 
-	// CHAN-TORU へのリクエスト実行
-	clientMethods.post(orgUrl.list, args)
+	// CHAN-TORU へのリクエスト
+	rest.postPromise(restEndpoint.list, args)
 	.then((val) => {
 		console.log('listReservations(): then');
 		var data = val.data;
@@ -183,7 +170,6 @@ function listReservations(req, res) {
  *   番組表には eid が存在しないので、先にAPI/DB経由で eid を取得する必要あり
  * @param
  */
-//app.get(expressEndpoint.resv, function(req, res){
 function addReservation(req, res) {
 	console.log('addReservation()');
 	
@@ -206,9 +192,9 @@ function addReservation(req, res) {
 			//double   : 'on',
 			//title    : '%E3%82%B0%E3%83%83%E3%83%89%E3%83%BB%E3%83%95%E3%82%A1%E3%82%A4%E3%83%88%EF%BC%883%EF%BC%89%E3%80%8C%E7%96%91%E6%83%91%E3%81%AE%E3%83%AA%E3%82%B9%E3%83%88%E3%80%8D', // 任意
 			//priority : '1',
-			//quality     : checkReqParamNumber('230', body.quality),
-			//condition   : checkReqParamCand(['w1', 'w2', 'w3', 'w4', 'w5', 'w6', 'w7'], body.condition),
-			//destination : checkReqParamCand(['HDD'], body.destination)
+			quality     : checkReqParamNumber('230', body.quality),
+			condition   : checkReqParamCand(['w1', 'w2', 'w3', 'w4', 'w5', 'w6', 'w7'], body.condition),
+			destination : checkReqParamCand(['HDD'], body.destination)
 		};
 	} catch (e) {
 		console.log('addReservation(): Invalid body. ' + JSON.stringify(e));
@@ -225,7 +211,7 @@ function addReservation(req, res) {
 	args.data = postData;
 
 	// CHAN-TORU へのリクエスト実行
-	clientMethods.post(orgUrl.resv, args)
+	rest.postPromise(restEndpoint.resv, args)
 	.then((val) => {
 		console.log('addReservation(): then');
 		var data = val.data;
@@ -308,7 +294,7 @@ function removeReservation(req, res) {
 	args.parameters = postParam;
 	
 	// CHAN-TORU へのリクエスト実行
-	clientMethods.post(orgUrl.resv, args)
+	rest.postPromise(restEndpoint.resv, args)
 	.then((val) => {
 		console.log('removeReservation(): then');
 		var data = val.data;
@@ -367,7 +353,6 @@ app.get(expressEndpoint.search, function(req, res){
 	let db = new dbClient(dbConf); 
 	db.connect();
 
-	// CHAN-TORUに投げるクエリリクエストを生成
 	let query = req.query;  // デコード済み
 	let sql;
 
@@ -407,55 +392,6 @@ app.get(expressEndpoint.search, function(req, res){
 	.finally(() => {db.end();});
 
 });
-
-
-/* 
- * 7. 予約フラグ更新API
- * @description
- *   PostgreSQLのprogramsテーブルのis_reservedを更新
- * @param
- * @todo
- */
-// app.post(expressEndpoint.merge, function(req, res){
-// 	console.log('API07: access to ' + expressEndpoint.merge);
-
-// 	// @todo 予約一覧API終了後に移す
-// 	let db = new dbClient(dbConf); 
-// 	db.connect();
-
-// 	// 予約一覧APIにアクセス
-// 	clientMethods.post(localhost + expressEndpoint.reservations, {parameters: {op: 'list'}})
-// 	.then((val) => {
-// 		var data = val.data;
-// 		var reservations = JSON.parse(data.toString('utf8'));
-// 		//console.log(reservations);
-
-// 		var eventIds = reservations.map(element => {
-// 			return parseInt(element.eventId, 16).toString();
-// 		});
-// 		var sql = 'UPDATE programs SET is_reserved = false WHERE start_date >= CURRENT_TIMESTAMP;';
-// 		if (eventIds.length > 1) {
-// 			sql += "UPDATE programs SET is_reserved = true" +
-// 					"WHERE start_date >= CURRENT_TIMESTAMP AND event_id IN ('" +
-// 					eventIds.join("','") + "');";
-// 		}
-// 		console.log('API07: ' + sql);
-// 		return db.query(sql); // Promise
-// 	})
-// 	.then(resSql => {
-// 		console.log('API07: then');
-// 		return res.status(200).send();
-// 	})
-// 	.catch(e => {
-// 		console.error('API07: catch');
-// 		console.error(e.stack);
-// 		return res.status(500).json({
-// 			errorCode: 'E070',
-// 			errorMsg:  'Error: Update of is_reserved failed.'
-// 		});
-// 	})
-// 	.finally(() => {db.end();});
-// });
 
 
 var server = app.listen(serverPort, function () {
