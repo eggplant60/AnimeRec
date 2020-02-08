@@ -7,6 +7,7 @@ from time import sleep
 from datetime import datetime
 import requests
 from pprint import pprint
+import re
 
 """
 eid更新の条件
@@ -22,24 +23,40 @@ eid更新の条件
 
 target_genre = '107100'
 sleep_sec = 3
-url_api = 'http://localhost:3001/api/programs/eid'
+url_api = 'https://tv.so-net.ne.jp/chan-toru/detail'
 conf_path = '../conf/db.json'
+headers_path = '../conf/chan_toru.json'
 
 def get_event_id(area, sid, pid):
-    response = requests.post(url_api, data={'area': area, 'sid': sid, 'pid': pid})
-    #import pdb; pdb.set_trace()
-    r_body = response.json()
-    print(r_body)
-    print(type(r_body))
-    if (response.status_code == 200):
-        return r_body['eid'] # str
-    else:
+    response = requests.post(
+        url_api, 
+        data = {
+            'type': 'bytime',
+            'cat' : '1',
+            'area': area, 
+            'sid': sid, 
+            'pid': pid
+        },
+        headers = headers
+    )
+    r_text = response.text
+    re_eid = re.search(r'eid=([0-9]+)&', r_text)
+
+    if (re_eid is None):
+        print('Error: No match.')
         return None
+    else:
+        eid = re_eid.group(1)
+        print('match, eid = ' + eid)
+        return eid
 
 if __name__ == '__main__':
     # 設定の読み込み
     with open(conf_path, 'r') as f:
         conf = json.load(f)
+
+    with open(headers_path, 'r') as f:
+        headers = json.load(f)
     
     with psycopg2.connect(
             host = conf['host'],
@@ -67,7 +84,10 @@ if __name__ == '__main__':
             for i, row in enumerate(rows):
                 print('-' * 40)
                 print('{}/{}'.format(i+1, len(rows)))
-                pprint(row)
+                #pprint(row)
+                print(row[6])
+                print(row[7])
+                print(row[-2])
                 event_id = get_event_id(row[10], row[8], row[0])
                 
                 if (event_id is not None):

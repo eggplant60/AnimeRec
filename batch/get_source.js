@@ -30,7 +30,7 @@ function getProgramsFromToday(delta) {
 	let startDate = new Date(baseDate.getTime());
 	startDate.setDate(startDate.getDate() + delta);
 	let startQuery = date2YYYYmmddhhss(startDate);
-	console.log(startQuery);
+	console.log(startQuery + ': start');
 	
 	let param = {};
 	param = {
@@ -53,21 +53,28 @@ function getProgramsFromToday(delta) {
 	};
 
 	// CHAN-TORU へのリクエスト実行
-	return new Promise((resolve, reject) => {
-	
-	client.get(url, args, (data, resopnse) => { // なんらかのレスポンスがあった
-		
+	return new Promise((resolve, reject) => {	
+		client.get(url, args, (data, resopnse) => { // なんらかのレスポンスがあった
+			
 			//response.readable = true; // レスポンスを読み取るために必要
 			let strVal = data.toString('utf8');
-		let parsed = JSON.stringify(JSON.parse(strVal), null, 4);
-		let fileName = jsonPath + date2YYYYmmdd(startDate) + '.json';
-		fs.writeFile(fileName, parsed, (err, data) => {
-		if (err) console.err(err);
-		else console.log('write end');
-		});
-		resolve(delta + 1);
-	});
+			let obj = JSON.parse(strVal);
 
+			if (obj.list.length > 0) {
+				let parsed = JSON.stringify(obj, null, 4);
+				let fileName = jsonPath + date2YYYYmmdd(startDate) + '.json';
+				fs.writeFile(fileName, parsed, (err, data) => {
+					if (err) {
+						console.err(startQuery + ': ' + err);
+					} else {
+						console.log(startQuery + ': finish, write');
+					} 
+				});
+			} else {
+				console.log(startQuery + ': finish, no data');
+			}
+			resolve(delta + 1);
+		});
 	});
 }
 
