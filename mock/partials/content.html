@@ -6,7 +6,6 @@
 		<md-button class="sidebar-button">
 			<i class="material-icons">search</i>
 		</md-button>
-
 		<md-button class="sidebar-button">
 			<i class="material-icons">schedule</i>
 		</md-button>
@@ -16,23 +15,20 @@
 		<md-button class="sidebar-button" ng-click="ctrl.onFilter()">
 			<i class="material-icons">filter_list</i>
 		</md-button>
-
-		<md-button class="sidebar-button" ng-click="ctrl.onRefresh()">
+		<md-button class="sidebar-button" ng-disabled="ctrl.inProcess" ng-click="ctrl.onRefresh()">
 			<i class="material-icons">refresh</i>
 		</md-button>
-
 		<md-button class="sidebar-button" ng-click="ctrl.onSettings()">
 			<i class="material-icons">settings</i>
 		</md-button>
 	</div>
 
+	<!-- 設定画面 -->
 
+	<!-- カラム -->
 	<div ng-repeat="column in ctrl.programList">
 
-		<!-- 1カラム目 -->
-		
 		<div class="dow-column">
-
 			<md-toolbar layout="row">
 				<div class="md-toolbar-tools">
 					<b>{{ column.columnDate | date : 'M/d (EEE)' }}</b>
@@ -41,7 +37,7 @@
 
 			<md-content class="scroll">
 				<md-list flex role="list">
-					<!-- md-subheader class="md-no-sticky">3 line item (with hover)</!md-subheader -->
+					<!-- 番組 -->
 					<md-list-item class="md-3-line md-long-text" 
 							ng-repeat="program in column.rowPrograms | filter:ctrl.recFilter">
 						<img ng-src="{{ 'img/channels/icon_' + program.service_id + '.PNG' }}" class="md-avatar"/>
@@ -75,10 +71,11 @@
 							</div>
 						</div>
 					</md-list-item>
-					<!--  --------------------------- -->
+					<!-- 番組ここまで -->
+					
 				</md-list>
 			</md-content>
 		</div>
-		<md-divider></md-divider>
 	</div>
+	<!-- カラムここまで -->
 </div>

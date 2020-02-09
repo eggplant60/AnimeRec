@@ -23,7 +23,7 @@
 		 */
 		vm.programList = common.createEmptyProgramList(nColumns);
 		vm.reservations = [];
-		vm.inProcess = true;
+		vm.inProcess = false;
 		vm.allShow = true;
 		
 		/* 
@@ -31,6 +31,7 @@
 		 */
 		function initReload() {
 			$log.debug('reload');
+			//vm.inProcess = true;
 			common.reload(vm.programList, genreId)
 			.then((values) => {
 				$log.debug('reload: get programList.');
@@ -39,6 +40,7 @@
 						vm.programList[i].rowPrograms = values[i]; // 一度に更新しようとすると表示されない？
 					}, i*100); // 左から順に処理
 				}
+				//vm.inProcess = false;
 			})
 			.catch((err) => {
 				$log.error('reload: Error, can not get programList!');
@@ -52,6 +54,7 @@
 		*/
 		function mergeReserve() {
 			$log.debug('merge');
+			vm.inProcess = true;
 			api.reservations.list().$promise
 			.then((data) => {
 				$log.debug('merge: get reservations.');
