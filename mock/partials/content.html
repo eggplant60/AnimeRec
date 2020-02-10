@@ -1,37 +1,11 @@
-<div layout="row" ng-cloak ng-controller="AppCtrl as ctrl">
-
-	<!-- サイドバー -->
-	<div class="sidebar" layout="column" layout-align="end center">
-
-		<md-button class="sidebar-button">
-			<i class="material-icons">search</i>
-		</md-button>
-		<md-button class="sidebar-button">
-			<i class="material-icons">schedule</i>
-		</md-button>
-
-		<span flex></span>
-
-		<md-button class="sidebar-button" ng-click="ctrl.onFilter()">
-			<i class="material-icons">filter_list</i>
-		</md-button>
-		<md-button class="sidebar-button" ng-disabled="ctrl.inProcess" ng-click="ctrl.onRefresh()">
-			<i class="material-icons">refresh</i>
-		</md-button>
-		<md-button class="sidebar-button" ng-click="ctrl.onSettings()">
-			<i class="material-icons">settings</i>
-		</md-button>
-	</div>
-
-	<!-- 設定画面 -->
-
-	<!-- カラム -->
+<div layout="row" layout-fill>
 	<div ng-repeat="column in ctrl.programList">
 
 		<div class="dow-column">
-			<md-toolbar layout="row">
+			<!-- 日付 -->
+			<md-toolbar>
 				<div class="md-toolbar-tools">
-					<b>{{ column.columnDate | date : 'M/d (EEE)' }}</b>
+					<b>{{ column.label | date : 'M/d (EEE)' }}</b>
 				</div>
 			</md-toolbar>
 
@@ -64,7 +38,7 @@
 								</md-button>
 								<md-button class="md-icon-button">
 									<i class="material-icons" ng-style="{ color: 'grey'}"
-											ng-click="ctrl.openDialog(program)">
+											ng-click="ctrl.openDetail(program)">
 										more_horiz
 									</i>
 								</md-button>
@@ -77,5 +51,4 @@
 			</md-content>
 		</div>
 	</div>
-	<!-- カラムここまで -->
 </div>

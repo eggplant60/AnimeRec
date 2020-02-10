@@ -47,3 +47,7 @@ a {
 a:hover {
 	color: skyblue;
 }
+
+.conf-dialog {
+	min-width: 450px;
+}

@@ -5,38 +5,37 @@
 		.controller('AppCtrl', [
 			'$log', 
 			'$timeout', 
+			'$mdDialog',
 			'ApiService', 
 			'CommonService', 
 			AppCtrl]);
 
-	function AppCtrl($log, $timeout, api, common) {
+	function AppCtrl($log, $timeout, $dialog, api, common) {
 		$log.debug('AppCtrl: start ---------------------');
 
-		const genreId = '107100';
-		const nColumns = 7;
-
 		var vm = this;
+		vm.conf = angular.copy(common.defaultConf);
 		vm.searchEngine='https://google.com/search?tbm=isch&q='; // 'https://google.com/search?q=';
 
 		/* 
 		 * ビューの列数を早く確定させたいため、先に番組表の枠を作成する
 		 */
-		vm.programList = common.createEmptyProgramList(nColumns);
-		vm.reservations = [];
+		vm.programList = common.createEmptyProgramList(vm.conf);
+		console.debug(vm.programList);
+		
 		vm.inProcess = false;
 		vm.allShow = true;
-		vm.recConf = common.defaultRecConf;
-
+		
 		/* 
 		 * 番組表取得
 		 */
 		function initReload() {
 			$log.debug('reload');
 			//vm.inProcess = true;
-			common.reload(vm.programList, genreId)
+			common.reload(vm.programList, vm.conf)
 			.then((values) => {
 				$log.debug('reload: get programList.');
-				for (let i=0; i<nColumns; i++) {
+				for (let i=0; i<vm.conf.column.number; i++) {
 					$timeout(() => {
 						vm.programList[i].rowPrograms = values[i]; // 一度に更新しようとすると表示されない？
 					}, i*100); // 左から順に処理
@@ -60,7 +59,7 @@
 			.then((data) => {
 				$log.debug('merge: get reservations.');
 				$log.debug(data);
-				for (let i=0; i<nColumns; i++) {
+				for (let i=0; i<vm.conf.column.number; i++) {
 					$timeout(() => {
 						let row = vm.programList[i].rowPrograms;
 						row = common.merge(row, data);
@@ -91,7 +90,7 @@
 			} else {
 				promise = common.removeReserve;
 			}
-			promise(program).then((val) => {
+			promise(program, vm.conf).then((val) => {
 				$log.debug('on reserve: success');
 				program = val;
 				mergeReserve();
@@ -104,7 +103,7 @@
 		/* 
 		* デバッグ用ダイアログ
 		*/
-		vm.openDialog = common.openDialog;
+		vm.openDetail = common.openDetail;
 
 		/* 
 		 * フィルターボタン
@@ -128,10 +127,67 @@
 		};
 
 		/* 
-		 * 録画設定ボタン
+		 * 設定ボタン
 		 */
-		vm.onSettings = () => {
-			console.debug('on settings');
-		};		
+		vm.onConf = (type) => {
+			$log.debug('on conf ' + type);
+			switch(type) {
+				case 'genre':
+					//vm.setConfGenre();
+					break;
+				case 'rec':
+					//vm.setConfRec();
+					break;
+				case 'time':
+					vm.setConfTime();
+					break;
+				default:
+					$log.error('on conf error: undefined type');
+			}
+			$log.debug('on conf: finish');
+		};
+
+		/* 
+		 * 設定ダイアログ
+		 */
+		vm.setConfTime = () => {
+			$log.debug('set conf time');
+			$dialog.show({
+				controller: ConfDialogCtrl,
+				templateUrl: 'partials/dialog-time.html',
+				parent: angular.element(document.body),
+				//targetEvent: ev,
+				clickOutsideToClose: true,
+				fullscreen: false,
+				locals: {
+					confTime: vm.conf.time
+				}
+			})
+			.then((val) => {
+				$log.debug('set conf time: resolve');
+				vm.programList = common.createEmptyProgramList(vm.conf);
+				initReload();
+				mergeReserve();	
+			})
+			.then((err) => {
+				$log.debug('set conf time: reject');
+			});
+		};
 	}
+
+	/* 
+	 * 設定画面のデータを管理するコントローラ
+	 */
+	function ConfDialogCtrl($scope, $mdDialog, confTime) {
+		$scope.confTime = confTime;
+		// Promise の reject
+		$scope.cancel = () => {
+			$mdDialog.cancel('ConfDialogCtrl: cancel');
+		};
+		// Promise の resolve
+		$scope.ok = () => {
+			$mdDialog.hide('ConfDialogCtrl: hide');
+		};
+	}	
+
 })();

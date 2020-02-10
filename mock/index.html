@@ -9,8 +9,11 @@
 </head>
 <body>
 	<!-- Contents -->
-	<wg-layout></wg-layout>
-
+	<div ng-cloak ng-controller="AppCtrl as ctrl" layout="row" layout-fill>
+		<sidebar></sidebar>
+		<content></content>
+	</div>
+	
 	<!-- Angular Material requires Angular.js Libraries -->
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-animate.min.js"></script>

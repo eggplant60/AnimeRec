@@ -1,0 +1,40 @@
+<md-dialog class="conf-dialog" aria-label="conf-time">
+
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<h2>時間設定</h2><span flex></span>
+		</div>
+	</md-toolbar>
+
+	<md-dialog-content>
+		<div>
+			番組表に表示する時間帯を設定します。
+		</div>
+
+		<div flex="50" layout="column" layout-align="center center">
+			<span>開始時刻 = {{ confTime.from }}:00</span>
+		</div>
+		<md-slider md-discrete ng-model="confTime.from"
+					step="2" min="5" max="29" aria-label="from">
+		</md-slider>
+
+		<div flex="50" layout="column" layout-align="center center">
+			<span>終了時刻 = {{ confTime.to }}:00</span>
+		</div>
+		<md-slider md-discrete ng-model="confTime.to"
+					step="2" min="5" max="29" aria-label="to">
+		</md-slider>
+
+	</md-dialog-content>
+
+	<md-dialog-actions layout="row">
+		<md-button ng-click="cancel()">
+			キャンセル
+		</md-button>
+		<span flex></span>
+		<md-button ng-click="ok()" ng-disabled="confTime.from > confTime.to">
+			OK
+		</md-button>
+	</md-dialog-actions>
+
+</md-dialog>

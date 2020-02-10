@@ -5,14 +5,27 @@ const summaryMaxLen = 70;
 angular.module('app')
 	.service('CommonService', ['$log', '$filter', '$timeout', '$mdDialog', 'ApiService', function($log, $filter, $timeout, $dialog, api) {
 
-		this.recConf = {
-			condition: 'week',      // 'week' / 'day' / 'once'
-			quality  : 'normal',    // 'normal' / 'high'
-			destination: 'external' // 'external' / 'internal'
+		this.defaultConf = {
+			rec: {
+				condition: 'week',      // 'week'/'day'/'once'
+				quality  : 'normal',    // 'normal'/'high'
+				destination: 'external' // 'external'/'internal'	
+			},
+			genre: {
+				exclusive : true,
+				mainId : '107100',
+			},
+			time: {
+				from: 19,
+				to  : 29,
+			},
+			column: {
+				number: 7
+			}
 		};
 
 		this.roundDate = (date) => {
-			return new Date($filter('date')(date, 'yyyy-MM-dd 05:00:00'));
+			return new Date($filter('date')(date, 'yyyy-MM-dd 00:00:00'));
 		};
 		
 		this.plus1day = (date) => {
@@ -21,20 +34,28 @@ angular.module('app')
 			return ret;
 		};
 
+		this.plusHours = (date, hours) => {
+			let ret = angular.copy(date);
+			ret.setHours(date.getHours() + hours);
+			return ret;
+		};
+
 		this.date2str = (date) => {
 			return $filter('date')(date, 'yyyy-MM-ddTHH:mm:ss');
 		};
 
-		this.createEmptyProgramList = (nColumns) => {
+		this.createEmptyProgramList = (conf) => {
 			let now = new Date();
 			let baseDate = this.roundDate(now);
 			let dateColumns = [baseDate];
-			for (let i=0; i < nColumns-1; i++) {
+			for (let i=0; i < conf.column.number-1; i++) {
 				dateColumns.push(this.plus1day(dateColumns[i]));
 			}
 			return dateColumns.map((element) => {
 				return {
-					columnDate: element, 
+					label: element, 
+					from : this.plusHours(element, conf.time.from),
+					to   : this.plusHours(element, conf.time.to),
 					rowPrograms: []
 				};
 			});
@@ -48,21 +69,20 @@ angular.module('app')
 			});
 		};
 
-		this.reload = (programList, genreId) => {
+		this.reload = (programList, conf) => {
 			let promises = [];
 			programList.forEach(element => {
-				let thisDate = element.columnDate;
 				let params = {
-					from    : this.date2str(thisDate),
-					to      : this.date2str(this.plus1day(thisDate)),
-					genreId : genreId
+					from    : this.date2str(element.from),
+					to      : this.date2str(element.to),
+					genreId : conf.genre.mainId
 				};
 				promises.push(api.programs.get(params).$promise);
 			});
 			return Promise.all(promises);
 		};
 
-		this.addReserve = (program) => {
+		this.addReserve = (program, conf) => {
 			return new Promise((resolve, reject) => {
 				if (!program.event_id) {
 					reject('on reserv: can not add reservation due to no event_id.');
@@ -73,9 +93,9 @@ angular.module('app')
 					date: program.start_date,
 					category : '1',
 					duration : program.duration,
-					condition: this.recConf.condition,
-					quality  : this.recConf.quality,
-					destination: this.recConf.destination
+					condition: conf.rec.condition,
+					quality  : conf.rec.quality,
+					destination: conf.rec.destination
 				};
 				api.reservations.add(postData).$promise.then(
 					(data) => {
@@ -99,7 +119,7 @@ angular.module('app')
 			});
 		};
 
-		this.removeReserve = (program) => {
+		this.removeReserve = (program, conf) => {
 			return new Promise((resolve, reject) => {
 				if (!(program.item_id && program.dvr_id)) {
 					reject('on reserve: can not remove reservation due to no item_id nor drv_id.');
@@ -164,12 +184,12 @@ angular.module('app')
 			);
 		};
 
-		this.openDialog = (program) => {
-			$log.debug('dialog: open');
+		this.openDetail = (program) => {
+			$log.debug('detail: open');
 			//$log.debug(program);
 			$dialog.show({
 				controller: DialogController,
-				templateUrl: 'partials/dialog.html',
+				templateUrl: 'partials/dialog-detail.html',
 				parent: angular.element(document.body),
 				//targetEvent: ev,
 				clickOutsideToClose: true,
@@ -178,22 +198,24 @@ angular.module('app')
 					program: program
 				}
 			});
-			function DialogController($scope, $mdDialog, program) {
-				$scope.program = program;
-				$scope.hide = function() {
-					$log.debug('dialog: hide');
-					$mdDialog.hide();
-				};
-				$scope.cancel = function() {
-					$log.debug('dialog: cancel');
-					$mdDialog.cancel();
-				};
-				$scope.answer = function(answer) {
-					$log.debug('dialog: answer');
-					$mdDialog.hide(answer);
-				};
-			}	
 		};
+
+		function DialogController($scope, $mdDialog, program) {
+			$scope.program = program;
+			$scope.hide = function() {
+				$log.debug('dialog: hide');
+				$mdDialog.hide();
+			};
+			$scope.cancel = function() {
+				$log.debug('dialog: cancel');
+				$mdDialog.cancel();
+			};
+			$scope.answer = function(answer) {
+				$log.debug('dialog: answer');
+				$mdDialog.hide(answer);
+			};
+		}	
+
 	}])
 
 	// ------------------------- filter -----------------------------------
