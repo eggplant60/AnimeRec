@@ -6,7 +6,8 @@
 
 	function ApiService($log, $resource) {
 
-		const _baseUrl = 'http://127.0.0.1:3001/api';
+		//const _baseUrl = 'http://127.0.0.1:3001/api';
+		const _baseUrl = 'http://192.168.11.205:3001/api'; // CORS対応
 
 		this.programs = $resource(_baseUrl + '/programs', {},
 			{

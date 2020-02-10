@@ -5,6 +5,12 @@ const summaryMaxLen = 70;
 angular.module('app')
 	.service('CommonService', ['$log', '$filter', '$timeout', '$mdDialog', 'ApiService', function($log, $filter, $timeout, $dialog, api) {
 
+		this.recConf = {
+			condition: 'week',      // 'week' / 'day' / 'once'
+			quality  : 'normal',    // 'normal' / 'high'
+			destination: 'external' // 'external' / 'internal'
+		};
+
 		this.roundDate = (date) => {
 			return new Date($filter('date')(date, 'yyyy-MM-dd 05:00:00'));
 		};
@@ -65,18 +71,28 @@ angular.module('app')
 					sid: program.service_id,
 					eid: program.event_id,
 					date: program.start_date,
-					duration: program.duration,
+					category : '1',
+					duration : program.duration,
+					condition: this.recConf.condition,
+					quality  : this.recConf.quality,
+					destination: this.recConf.destination
 				};
 				api.reservations.add(postData).$promise.then(
 					(data) => {
-						if (data.responseCode === '803') {
-							reject('on reserve: this program has finished ');
-						} else {
+						console.debug(data);
+						if (data.responseCode === '0') {
 							program.item_id = 'x'; //仮の値
 							resolve(program);
+						} else if (data.responseCode === '803') {
+							this.openInfo('この番組はすでに終了しています。');
+							reject('on reserve: this program has finished');
+						} else if (data.responseCode === '830') {
+							this.openInfo('以下の予約と重複しています。 ' + data.responseMsg);
+							reject('on reserve: this reservation is maybe duplicated');
 						}
 					},
 					(err) => {
+						console.debug(err);
 						reject('on reserve: failed' +  err);
 					}
 				);
@@ -133,6 +149,19 @@ angular.module('app')
 				});
 			});
 			return progs;
+		};
+
+		this.openInfo = (text) => {
+			$log.debug('info: open');
+			$dialog.show(
+				$dialog.alert()
+					.parent(angular.element(document.body))
+					.clickOutsideToClose(true)
+					.title('お知らせ')
+					.textContent(text)
+					.ariaLabel('Info')
+					.ok('OK')
+			);
 		};
 
 		this.openDialog = (program) => {

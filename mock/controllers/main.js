@@ -25,7 +25,8 @@
 		vm.reservations = [];
 		vm.inProcess = false;
 		vm.allShow = true;
-		
+		vm.recConf = common.defaultRecConf;
+
 		/* 
 		 * 番組表取得
 		 */
@@ -79,6 +80,7 @@
 		*/
 		vm.onReserveButton = function(program) {
 			if (vm.inProcess) {
+				common.openInfo('更新処理が完了するまでお待ち下さい。');
 				$log.debug('on reserve: return due to another process');
 				return;
 			}
