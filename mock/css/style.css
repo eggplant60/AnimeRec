@@ -9,14 +9,16 @@
 /*
  *
  */
+
  .sidebar {
-	position: absolute;
+	position: fixed;
 	width: 60px;
 	left: 0;
 	top: 0;
 	bottom: 0;
 	background-color: #333340;
 	margin-right: 5px;
+	z-index: 100;
 }
 
 .sidebar-button {
@@ -25,9 +27,15 @@
 	color: dodgerblue;
 }
 
-.dow-column {
+.main-content {
 	position: relative;
 	left: 65px;
+	height: 100%;
+	width: 100%;
+	overflow-x: auto;
+}
+
+.dow-column {
 	width: 350px;
 	margin-right: 6px;
 	height: 90vh;

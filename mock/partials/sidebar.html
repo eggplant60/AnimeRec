@@ -12,6 +12,11 @@
 
 	<span flex></span>
 
+	<!-- 更新 -->
+	<md-button class="sidebar-button" ng-disabled="ctrl.inProcess" ng-click="ctrl.onRefresh()">
+		<i class="material-icons">refresh</i>
+	</md-button>
+
 	<!-- フィルター -->
 	<md-button class="sidebar-button" ng-click="ctrl.onFilter()">
 		<i class="material-icons">filter_list</i>
@@ -22,23 +27,25 @@
 		<md-button class="sidebar-button" ng-click="$mdMenu.open($event)">
 			<i md-menu-origin="" class="material-icons">settings</i>
 		</md-button>
-		<md-menu-content width="4">
+		<md-menu-content width="3">
 			<md-menu-item>
-				<div layout="row" layout-align="space-between center">
 				<md-button ng-click="ctrl.onConf('genre')">ジャンル</md-button>
-				<md-button ng-click="ctrl.onConf('rec')">録画</md-button>
+			</md-menu-item>
+			<md-menu-item>
 				<md-button ng-click="ctrl.onConf('time')">時間</md-button>
-				<md-button ng-click="ctrl.version('column')">表示</md-button>
+			</md-menu-item>
+			<md-menu-item>
+				<md-button ng-click="ctrl.onConf('rec')">録画</md-button>
+			</md-menu-item>
+			<md-menu-item>
+				<md-button ng-click="ctrl.onConf('display')">表示</md-button>
+			</md-menu-item>
+			<md-menu-item>
 				<md-button ng-click="ctrl.version()">バージョン</md-button>
-				</div>
 			</md-menu-item>
 		</md-menu-content>
 	</md-menu>
 
-	<!-- 更新 -->
-	<md-button class="sidebar-button" ng-disabled="ctrl.inProcess" ng-click="ctrl.onRefresh()">
-		<i class="material-icons">refresh</i>
-	</md-button>	
 </div> 
 
 

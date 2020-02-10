@@ -6,24 +6,22 @@
 		</div>
 	</md-toolbar>
 
-	<md-dialog-content>
-		<div>
-			番組表に表示する時間帯を設定します。
+	<md-dialog-content layout="column" layout-align="center" layout-fill>
+		<div>番組表に表示する時間帯を設定します。</div>
+
+		<div flex layout="row" layout-align="center center">
+			<div>開始時刻 = {{ confTime.from.toString().padStart(2, '0') }}:00</div>
+			<md-slider md-discrete ng-model="confTime.from"
+				step="2" min="5" max="29" aria-label="from">
+			</md-slider>
 		</div>
 
-		<div flex="50" layout="column" layout-align="center center">
-			<span>開始時刻 = {{ confTime.from }}:00</span>
+		<div flex layout="row" layout-align="center center">
+			<div>終了時刻 = {{ confTime.to.toString().padStart(2, '0') }}:00</div>
+			<md-slider md-discrete ng-model="confTime.to"
+				step="2" min="5" max="29" aria-label="to">
+			</md-slider>
 		</div>
-		<md-slider md-discrete ng-model="confTime.from"
-					step="2" min="5" max="29" aria-label="from">
-		</md-slider>
-
-		<div flex="50" layout="column" layout-align="center center">
-			<span>終了時刻 = {{ confTime.to }}:00</span>
-		</div>
-		<md-slider md-discrete ng-model="confTime.to"
-					step="2" min="5" max="29" aria-label="to">
-		</md-slider>
 
 	</md-dialog-content>
 

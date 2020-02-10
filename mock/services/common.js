@@ -107,7 +107,11 @@ angular.module('app')
 							this.openInfo('この番組はすでに終了しています。');
 							reject('on reserve: this program has finished');
 						} else if (data.responseCode === '830') {
-							this.openInfo('以下の予約と重複しています。 ' + data.responseMsg);
+							var duplicate = data.responseMsg.split(':');
+							$log.debug(duplicate);
+							this.openInfo(
+								['次の予約と重複しています。 ', duplicate[0], duplicate[2]].join('  ')
+							);	
 							reject('on reserve: this reservation is maybe duplicated');
 						}
 					},
