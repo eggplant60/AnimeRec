@@ -79,6 +79,9 @@ app.use((req, res, next) => {   // CORS対応
  *   "category": "1",
  *   "date":  "2020-02-07T02:34:00+09:00",
  * 	 "duration": "4500"
+ *   "condition": "week",
+ *   "quality"  : "normal",
+ *   "destination" : "external"
  * }
  * 
  * 予約削除(remove)
@@ -177,9 +180,9 @@ function addReservation(req, res) {
 	var body = req.body;
 	var postParam = {timestamp4p: Date.now()}; // 現在時刻で固定
 	console.log(postParam);
-	var postData = {};
 
 	var defaultDate = date2Jst(new Date());
+	var postData = {};
 	try {
 		postData = {
 			op       : 'add',
@@ -188,14 +191,45 @@ function addReservation(req, res) {
 			category : checkReqParamCand(['1', '2'], body.category),
 			date     : checkReqParamDateFuck2(defaultDate, body.date), // 必須
 			duration : checkReqParamNumber('1200', body.duration), // 必須
-			// 以下任意
+			// 以下, 設定不要なパラメータ
 			//double   : 'on',
 			//title    : '%E3%82%B0%E3%83%83%E3%83%89%E3%83%BB%E3%83%95%E3%82%A1%E3%82%A4%E3%83%88%EF%BC%883%EF%BC%89%E3%80%8C%E7%96%91%E6%83%91%E3%81%AE%E3%83%AA%E3%82%B9%E3%83%88%E3%80%8D', // 任意
 			//priority : '1',
-			quality     : checkReqParamNumber('230', body.quality),
-			condition   : checkReqParamCand(['w1', 'w2', 'w3', 'w4', 'w5', 'w6', 'w7'], body.condition),
-			destination : checkReqParamCand(['HDD'], body.destination)
 		};
+		var condition = checkReqParamCand(['week', 'once', 'day'], body.condition); // 毎週がデフォルト		
+		var quality = checkReqParamCand(['normal', 'high'], body.quality); // 表示画質がデフォルト
+		var destination = checkReqParamCand(['external', 'internal'], body.destination); // 録画先は外部HDDがデフォルト
+		switch (condition) {
+			case 'week':
+				postData.condition = 'w' + 
+					((new Date(body.date).getDay() + 6) % 7 + 1).toString(); // なぜ0オリジンにしないのか理解に苦しむ
+				break;
+			case 'once':
+				break;
+			case 'day':
+				postData.condition = 'd';
+				break;
+			default:
+				throw 'invalid value condition = ' + condition;
+		}
+		switch (quality) {
+			case 'normal':
+				postData.quality = '230';
+				break;
+			case 'high':
+				break;
+			default:
+				throw 'invalid value quality = ' + quality;
+		}
+		switch (destination) {
+			case 'external':
+				postData.destination = 'HDD';
+				break;
+			case 'internal':
+				break;
+			default:
+				throw 'invalid value destination = ' + destination;
+		}
 	} catch (e) {
 		console.log('addReservation(): Invalid body. ' + JSON.stringify(e));
 		return res.status(400).json({
@@ -393,10 +427,34 @@ app.get(expressEndpoint.search, function(req, res){
 
 });
 
+/* 
+ * CHAN-TORUの認証確認用の関数
+ */
+function isAuthenticated() {
+	console.log('checkAuthenticated()');
+	
+	var args = JSON.parse(JSON.stringify(defaultArgs));
+	args.parameters = {op: 'current', resp: 'json', category: '1'};
+	return new Promise((resolve, reject) => {
+		rest.postPromise(restEndpoint.tvsearch, args)
+		.then((val) => {
+			JSON.parse(val.data.toString('utf8')); // jsonでパースできたら認証OKと判断
+			resolve();
+		})
+		.catch((err) => {
+			reject();
+		});
+	});
+}
 
-var server = app.listen(serverPort, function () {
-	var addr = this.address();
-	console.log('Node.js is listening to localhost:' + addr.port);
+
+isAuthenticated()
+.then((val) => {
+	var server = app.listen(serverPort, () => {
+		//var addr = this.address();
+		console.log('Node.js is listening to localhost:' + serverPort);
+	});
+})
+.catch((err) => {
+	console.error('Error: Authentication failed. Please check ' + headerPath);
 });
-
-
