@@ -1,0 +1,57 @@
+<md-dialog class="conf-dialog" aria-label="conf-rec">
+
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<h2>録画設定</h2><span flex></span>
+		</div>
+	</md-toolbar>
+
+	<md-dialog-content layout="row" layout-align="space-around start" layout-fill>
+		
+		<div flex layout="column" layout-align="start center">
+			<h4>毎回録画</h4>
+			<div>
+				<md-radio-group ng-model="conf.condition">
+					<md-radio-button value="week"> 毎週 </md-radio-button>
+					<md-radio-button value="day"> 毎日 </md-radio-button>
+					<md-radio-button value="once"> 1回のみ </md-radio-button>
+				</md-radio-group>
+			</div>
+		</div>
+
+		<div flex layout="column" layout-align="start center">
+			<h4>画質</h4>
+			<div>
+				<div>
+					<md-radio-group ng-model="conf.quality">
+						<md-radio-button value="normal"> 標準画質 </md-radio-button>
+						<md-radio-button value="high"> 高画質 </md-radio-button>
+					</md-radio-group>
+				</div>
+			</div>
+		</div>
+
+		<div flex layout="column" layout-align="start center">
+			<h4>保存先</h4>
+			<div>
+				<div>
+					<md-radio-group ng-model="conf.destination">
+						<md-radio-button value="external"> 外部HDD </md-radio-button>
+						<md-radio-button value="internal" ng-disabled="true"> 内部HDD </md-radio-button>
+					</md-radio-group>
+				</div>
+			</div>
+		</div>
+	</md-dialog-content>
+
+	<md-dialog-actions layout="row">
+		<md-button ng-click="cancel()">
+			キャンセル
+		</md-button>
+		<span flex></span>
+		<md-button ng-click="ok()">
+			OK
+		</md-button>
+	</md-dialog-actions>
+
+</md-dialog>

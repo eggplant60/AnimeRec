@@ -6,19 +6,20 @@
 		</div>
 	</md-toolbar>
 
+	<h4>番組開始時刻のフィルタリングを設定します。</h4>
+
 	<md-dialog-content layout="column" layout-align="center" layout-fill>
-		<div>番組表に表示する時間帯を設定します。</div>
 
 		<div flex layout="row" layout-align="center center">
-			<div>開始時刻 = {{ confTime.from.toString().padStart(2, '0') }}:00</div>
-			<md-slider md-discrete ng-model="confTime.from"
+			<div>開始時刻(最小) = {{ conf.from.toString().padStart(2, '0') }}:00</div>
+			<md-slider md-discrete ng-model="conf.from"
 				step="2" min="5" max="29" aria-label="from">
 			</md-slider>
 		</div>
 
 		<div flex layout="row" layout-align="center center">
-			<div>終了時刻 = {{ confTime.to.toString().padStart(2, '0') }}:00</div>
-			<md-slider md-discrete ng-model="confTime.to"
+			<div>開始時刻(最大) = {{ conf.to.toString().padStart(2, '0') }}:00</div>
+			<md-slider md-discrete ng-model="conf.to"
 				step="2" min="5" max="29" aria-label="to">
 			</md-slider>
 		</div>
@@ -30,7 +31,7 @@
 			キャンセル
 		</md-button>
 		<span flex></span>
-		<md-button ng-click="ok()" ng-disabled="confTime.from > confTime.to">
+		<md-button ng-click="ok()" ng-disabled="conf.from > conf.to">
 			OK
 		</md-button>
 	</md-dialog-actions>
