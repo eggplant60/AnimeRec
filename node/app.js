@@ -377,6 +377,7 @@ function removeReservation(req, res) {
  *   from:    '2020-01-02T05:00:00'  start_dateがちょうどを含む
  *   to:      '2020-01-09T05:00:00'  start_dateがちょうどを含まない
  *   genreId: '107100'
+ *   exclusive: 'true'
  * @todo
  * 	 パラメータのチェック
  *   DBクライアントのオブジェクトの再利用
@@ -404,11 +405,19 @@ app.get(expressEndpoint.search, function(req, res){
 			values:[query.from, query.to]
 		};
 	} else {
-		sql = {
-			text:  'SELECT * FROM programs WHERE start_date >= $1 AND start_date < $2 AND genre_ids = $3 ' + 
-					'ORDER BY start_date, service_id;',
-			values:[query.from, query.to, query.genreId]
-		};
+		if (query.exclusive === 'true') {
+			sql = {
+				text:  'SELECT * FROM programs WHERE start_date >= $1 AND start_date < $2 AND genre_ids = $3 ' + 
+						'ORDER BY start_date, service_id;',
+				values:[query.from, query.to, query.genreId]
+			};	
+		} else {
+			sql = {
+				text:  'SELECT * FROM programs WHERE start_date >= $1 AND start_date < $2 AND genre_ids LIKE $3 ' + 
+						'ORDER BY start_date, service_id;',
+				values:[query.from, query.to, '%' + query.genreId + '%']
+			};
+		}
 	}
 
 	console.log('SQL:' + sql.text, sql.values);
