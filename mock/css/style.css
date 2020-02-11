@@ -38,7 +38,7 @@
 .dow-column {
 	width: 350px;
 	margin-right: 6px;
-	height: 90vh;
+	height: calc(100vh - 90px);
 }
 
 .scroll {
@@ -48,12 +48,12 @@
 }
 
 a {
-	color: white;
+	color: black;
 	text-decoration: none;
 }
 
 a:hover {
-	color: skyblue;
+	color: #00BFFF;
 }
 
 .conf-dialog {

@@ -213,29 +213,7 @@ angular.module('app')
 				//targetEvent: ev,
 				clickOutsideToClose: true,
 				fullscreen: false,
-				template: [
-					'<md-dialog aria-label="version">',
-					'	<md-toolbar>',
-					'		<div class="md-toolbar-tools">',
-					'			<h2>バージョン</h2>',
-					'			<span flex></span>',
-					'			<md-button class="md-icon-button" ng-click="cancel()">',
-					'				<i class="material-icons" ng-style="{ color: \'white\'}">close</i>',
-					'			</md-button>',
-					'		</div>',
-					'	</md-toolbar>',
-					'	<md-dialog-content>',
-					'		<div class="md-dialog-content">',
-					'			<div>',
-					'				0.0.1 (Beta)',
-					'			</div>',
-					'			<div>',
-					'				<a href="https://tv.so-net.ne.jp/chan-toru/index#topmenu" target="_blank" rel="noopener noreferrer">Powered by CHAN-TORU</a>',
-					'			</div>',
-					'		</div>',
-					'	</md-dialog-content>',
-					'</md-dialog>',
-				].join('\n')
+				templateUrl: 'partials/dialog-version.html'
 			});			
 		};
 
