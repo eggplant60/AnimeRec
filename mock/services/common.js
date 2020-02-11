@@ -19,8 +19,9 @@ angular.module('app')
 				from: 19,
 				to  : 29,
 			},
-			column: {
-				number: 7
+			display: {
+				columns: 7,
+				theme:   'black'
 			}
 		};
 
@@ -48,7 +49,7 @@ angular.module('app')
 			let now = new Date();
 			let baseDate = this.roundDate(now);
 			let dateColumns = [baseDate];
-			for (let i=0; i < conf.column.number-1; i++) {
+			for (let i=0; i < conf.display.columns-1; i++) {
 				dateColumns.push(this.plus1day(dateColumns[i]));
 			}
 			return dateColumns.map((element) => {
@@ -75,7 +76,8 @@ angular.module('app')
 				let params = {
 					from    : this.date2str(element.from),
 					to      : this.date2str(element.to),
-					genreId : conf.genre.mainId
+					genreId : conf.genre.mainId,
+					exclusive: conf.genre.exclusive,
 				};
 				promises.push(api.programs.get(params).$promise);
 			});
@@ -192,7 +194,7 @@ angular.module('app')
 			$log.debug('detail: open');
 			//$log.debug(program);
 			$dialog.show({
-				controller: DialogController,
+				controller: DetailController,
 				templateUrl: 'partials/dialog-detail.html',
 				parent: angular.element(document.body),
 				//targetEvent: ev,
@@ -204,20 +206,60 @@ angular.module('app')
 			});
 		};
 
-		function DialogController($scope, $mdDialog, program) {
+		this.showVersion = () => {
+			$dialog.show({
+				controller: VersionController,
+				parent: angular.element(document.body),
+				//targetEvent: ev,
+				clickOutsideToClose: true,
+				fullscreen: false,
+				template: [
+					'<md-dialog aria-label="version">',
+					'	<md-toolbar>',
+					'		<div class="md-toolbar-tools">',
+					'			<h2>バージョン</h2>',
+					'			<span flex></span>',
+					'			<md-button class="md-icon-button" ng-click="cancel()">',
+					'				<i class="material-icons" ng-style="{ color: \'white\'}">close</i>',
+					'			</md-button>',
+					'		</div>',
+					'	</md-toolbar>',
+					'	<md-dialog-content>',
+					'		<div class="md-dialog-content">',
+					'			<div>',
+					'				0.0.1 (Beta)',
+					'			</div>',
+					'			<div>',
+					'				<a href="https://tv.so-net.ne.jp/chan-toru/index#topmenu" target="_blank" rel="noopener noreferrer">Powered by CHAN-TORU</a>',
+					'			</div>',
+					'		</div>',
+					'	</md-dialog-content>',
+					'</md-dialog>',
+				].join('\n')
+			});			
+		};
+
+		function VersionController($scope, $mdDialog) {
+			$scope.cancel = function() {
+				//$log.debug('detail: cancel');
+				$mdDialog.cancel();
+			};
+		}	
+	
+		function DetailController($scope, $mdDialog, program) {
 			$scope.program = program;
 			$scope.hide = function() {
-				$log.debug('dialog: hide');
+				//$log.debug('detail: hide');
 				$mdDialog.hide();
 			};
 			$scope.cancel = function() {
-				$log.debug('dialog: cancel');
+				//$log.debug('detail: cancel');
 				$mdDialog.cancel();
 			};
-			$scope.answer = function(answer) {
-				$log.debug('dialog: answer');
-				$mdDialog.hide(answer);
-			};
+			// $scope.answer = function(answer) {
+			// 	$log.debug('dialog: answer');
+			// 	$mdDialog.hide(answer);
+			// };
 		}	
 
 	}])

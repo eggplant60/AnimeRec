@@ -35,7 +35,7 @@
 			common.reload(vm.programList, vm.conf)
 			.then((values) => {
 				$log.debug('reload: get programList.');
-				for (let i=0; i<vm.conf.column.number; i++) {
+				for (let i=0; i<vm.conf.display.columns; i++) {
 					$timeout(() => {
 						vm.programList[i].rowPrograms = values[i]; // 一度に更新しようとすると表示されない？
 					}, i*100); // 左から順に処理
@@ -59,7 +59,7 @@
 			.then((data) => {
 				$log.debug('merge: get reservations.');
 				$log.debug(data);
-				for (let i=0; i<vm.conf.column.number; i++) {
+				for (let i=0; i<vm.conf.display.columns; i++) {
 					$timeout(() => {
 						let row = vm.programList[i].rowPrograms;
 						row = common.merge(row, data);
@@ -127,19 +127,30 @@
 		};
 
 		/* 
+		 * バージョン
+		 */
+		vm.version = () => {
+			$log.debug('version');
+			common.showVersion();
+		};
+
+		/* 
 		 * 設定ボタン
 		 */
 		vm.onConf = (type) => {
 			$log.debug('on conf ' + type);
 			switch(type) {
 				case 'genre':
-					//vm.setConfGenre();
+					vm.setConf(type, true);
 					break;
 				case 'rec':
-					//vm.setConfRec();
+					vm.setConf(type, false);
 					break;
 				case 'time':
-					vm.setConfTime();
+					vm.setConf(type, true);
+					break;
+				case 'display':
+					vm.setConf(type, true);
 					break;
 				default:
 					$log.error('on conf error: undefined type');
@@ -150,36 +161,40 @@
 		/* 
 		 * 設定ダイアログ
 		 */
-		vm.setConfTime = () => {
-			$log.debug('set conf time');
+		vm.setConf = (type, reload) => {
+			$log.debug('set conf ' + type);
 			$dialog.show({
-				controller: ConfDialogCtrl,
-				templateUrl: 'partials/dialog-time.html',
-				parent: angular.element(document.body),
 				//targetEvent: ev,
+				controller: ConfDialogCtrl,
+				templateUrl: 'partials/dialog-' + type + '.html',
+				parent: angular.element(document.body),
 				clickOutsideToClose: true,
 				fullscreen: false,
 				locals: {
-					confTime: vm.conf.time
+					confType: vm.conf[type]
 				}
 			})
 			.then((val) => {
-				$log.debug('set conf time: resolve');
-				vm.programList = common.createEmptyProgramList(vm.conf);
-				initReload();
-				mergeReserve();	
+				$log.debug('set conf ' + type + ': resolve');
+				$log.debug(vm.conf[type]);
+				if (reload) {
+					vm.programList = common.createEmptyProgramList(vm.conf);
+					initReload();
+					mergeReserve();		
+				}
 			})
-			.then((err) => {
-				$log.debug('set conf time: reject');
+			.catch((err) => {
+				$log.debug('set conf ' + type + ': reject');
 			});
 		};
 	}
+	// --- AppCtrl ここまで --- //
 
 	/* 
 	 * 設定画面のデータを管理するコントローラ
 	 */
-	function ConfDialogCtrl($scope, $mdDialog, confTime) {
-		$scope.confTime = confTime;
+	function ConfDialogCtrl($scope, $mdDialog, confType) {
+		$scope.conf = confType;
 		// Promise の reject
 		$scope.cancel = () => {
 			$mdDialog.cancel('ConfDialogCtrl: cancel');
