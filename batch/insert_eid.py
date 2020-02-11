@@ -21,7 +21,7 @@ eid更新の条件
 2. eid : イベントID取得APIから受け取った値
 """
 
-target_genre = '107100'
+target_genre = '%%107100%%'
 sleep_sec = 3
 url_api = 'https://tv.so-net.ne.jp/chan-toru/detail'
 conf_path = '../conf/db.json'
@@ -75,7 +75,7 @@ if __name__ == '__main__':
                 WHERE event_id = '' 
                       -- AND created_at >= %s 
                       AND start_date >= %s
-                      AND genre_ids = %s;
+                      AND genre_ids LIKE %s;
                 """,
                 [today_str, now_str, target_genre]
             )
