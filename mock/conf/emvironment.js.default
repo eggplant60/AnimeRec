@@ -1,0 +1,6 @@
+angular.module('app')
+	.value('express', {
+		address: "192.168.11.xxx",
+		port   : "3001"
+	});
+	

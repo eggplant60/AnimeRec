@@ -1,2 +1,3 @@
+*.js
 *.json
 *.json.old[0-9]

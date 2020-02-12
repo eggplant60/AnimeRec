@@ -1,14 +1,11 @@
 angular.module('app', ['ngMaterial', 'ngResource'])
 	.config(function($mdThemingProvider) {
-		// Enable theme watching.
-		$mdThemingProvider.alwaysWatchTheme(true);	
+		$mdThemingProvider.alwaysWatchTheme(true); // Enable theme watching.
+		$mdThemingProvider.theme('default'); // light thme
 		// // dark theme
 		// $mdThemingProvider.theme('default')
 		// 	.primaryPalette('indigo')
 		// 	.dark();
-
-		// light thme
-		$mdThemingProvider.theme('default');
 	})
 	.config(function($logProvider) {
 		$logProvider.debugEnabled(true);
