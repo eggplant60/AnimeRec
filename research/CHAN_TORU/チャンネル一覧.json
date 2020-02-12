@@ -1,120 +1,0 @@
-GET /status/channelListGet?broadcastingType=2 HTTP/1.1
-Host: 192.168.11.101:64210
-
-HTTP/1.1 200 OK
-CONTENT-TYPE: application/json; charset=utf-8
-DATE: Sun, 12 Jan 2020 20:27:41 GMT
-CONTENT-LENGTH: 9450
-
-{ "errorcode": 0, "number": 29, "channel": [ { "networkId": 32736, "transportStreamId": 32736, "serviceId": 1024, "serviceType": 1, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 1, "freeCAMode": 0, "channelNumber": 11, "branchNumber": 0, "serviceProviderName": "", "serviceName": "ＮＨＫ総合１・東京", "freqChannelNo": "27", "remoteInhibitFlag": 0 }, { "networkId": 32736, "transportStreamId": 32736, "serviceId": 1025, "serviceType": 1, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 0, "freeCAMode": 0, "channelNumber": 12, "branchNumber": 0, "serviceProviderName": "", "serviceName": "ＮＨＫ総合２・東京", "freqChannelNo": "27", "remoteInhibitFlag": 0 }, { "networkId": 32737, "transportStreamId": 32737, "serviceId": 1032, "serviceType": 1, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 2, "freeCAMode": 0, "channelNumber": 21, "branchNumber": 0, "serviceProviderName": "", "serviceName": "ＮＨＫＥテレ１東京", "freqChannelNo": "26", "remoteInhibitFlag": 0 }, { "networkId": 32737, "transportStreamId": 32737, "serviceId": 1033, "serviceType": 1, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 0, "freeCAMode": 0, "channelNumber": 22, "branchNumber": 0, "serviceProviderName": "", "serviceName": "ＮＨＫＥテレ２東京", "freqChannelNo": "26", "remoteInhibitFlag": 0 }, { "networkId": 32737, "transportStreamId": 32737, "serviceId": 1034, "serviceType": 1, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 0, "freeCAMode": 0, "channelNumber": 23, "branchNumber": 0, "serviceProviderName": "", "serviceName": "ＮＨＫＥテレ３東京", "freqChannelNo": "26", "remoteInhibitFlag": 0 }, { "networkId": 32738, "transportStreamId": 32738, "serviceId": 1040, "serviceType": 1, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 4, "freeCAMode": 0, "channelNumber": 41, "branchNumber": 0, "serviceProviderName": "", "serviceName": "日テレ１", "freqChannelNo": "25", "remoteInhibitFlag": 0 }, { "networkId": 32738, "transportStreamId": 32738, "serviceId": 1041, "serviceType": 1, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 0, "freeCAMode": 0, "channelNumber": 42, "branchNumber": 0, "serviceProviderName": "", "serviceName": "日テレ２", "freqChannelNo": "25", "remoteInhibitFlag": 0 }, { "networkId": 32739, "transportStreamId": 32739, "serviceId": 1048, "serviceType": 1, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 6, "freeCAMode": 0, "channelNumber": 61, "branchNumber": 0, "serviceProviderName": "", "serviceName": "ＴＢＳ１", "freqChannelNo": "22", "remoteInhibitFlag": 0 }, { "networkId": 32739, "transportStreamId": 32739, "serviceId": 1049, "serviceType": 1, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 0, "freeCAMode": 0, "channelNumber": 62, "branchNumber": 0, "serviceProviderName": "", "serviceName": "ＴＢＳ２", "freqChannelNo": "22", "remoteInhibitFlag": 0 }, { "networkId": 32740, "transportStreamId": 32740, "serviceId": 1056, "serviceType": 1, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 8, "freeCAMode": 0, "channelNumber": 81, "branchNumber": 0, "serviceProviderName": "", "serviceName": "フジテレビ", "freqChannelNo": "21", "remoteInhibitFlag": 0 }, { "networkId": 32740, "transportStreamId": 32740, "serviceId": 1057, "serviceType": 1, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 0, "freeCAMode": 0, "channelNumber": 82, "branchNumber": 0, "serviceProviderName": "", "serviceName": "フジテレビ", "freqChannelNo": "21", "remoteInhibitFlag": 0 }, { "networkId": 32740, "transportStreamId": 32740, "serviceId": 1058, "serviceType": 1, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 0, "freeCAMode": 0, "channelNumber": 83, "branchNumber": 0, "serviceProviderName": "", "serviceName": "フジテレビ", "freqChannelNo": "21", "remoteInhibitFlag": 0 }, { "networkId": 32741, "transportStreamId": 32741, "serviceId": 1064, "serviceType": 1, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 5, "freeCAMode": 0, "channelNumber": 51, "branchNumber": 0, "serviceProviderName": "", "serviceName": "テレビ朝日", "freqChannelNo": "24", "remoteInhibitFlag": 0 }, { "networkId": 32741, "transportStreamId": 32741, "serviceId": 1065, "serviceType": 1, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 0, "freeCAMode": 0, "channelNumber": 52, "branchNumber": 0, "serviceProviderName": "", "serviceName": "テレビ朝日", "freqChannelNo": "24", "remoteInhibitFlag": 0 }, { "networkId": 32741, "transportStreamId": 32741, "serviceId": 1066, "serviceType": 1, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 0, "freeCAMode": 0, "channelNumber": 53, "branchNumber": 0, "serviceProviderName": "", "serviceName": "テレビ朝日", "freqChannelNo": "24", "remoteInhibitFlag": 0 }, { "networkId": 32742, "transportStreamId": 32742, "serviceId": 1072, "serviceType": 1, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 7, "freeCAMode": 0, "channelNumber": 71, "branchNumber": 0, "serviceProviderName": "", "serviceName": "テレビ東京１", "freqChannelNo": "23", "remoteInhibitFlag": 0 }, { "networkId": 32742, "transportStreamId": 32742, "serviceId": 1073, "serviceType": 1, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 0, "freeCAMode": 0, "channelNumber": 72, "branchNumber": 0, "serviceProviderName": "", "serviceName": "テレビ東京２", "freqChannelNo": "23", "remoteInhibitFlag": 0 }, { "networkId": 32742, "transportStreamId": 32742, "serviceId": 1074, "serviceType": 1, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 0, "freeCAMode": 0, "channelNumber": 73, "branchNumber": 0, "serviceProviderName": "", "serviceName": "テレビ東京３", "freqChannelNo": "23", "remoteInhibitFlag": 0 }, { "networkId": 32375, "transportStreamId": 32375, "serviceId": 24632, "serviceType": 1, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 3, "freeCAMode": 0, "channelNumber": 31, "branchNumber": 0, "serviceProviderName": "", "serviceName": "ｔｖｋ１", "freqChannelNo": "18", "remoteInhibitFlag": 0 }, { "networkId": 32375, "transportStreamId": 32375, "serviceId": 24633, "serviceType": 1, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 0, "freeCAMode": 0, "channelNumber": 32, "branchNumber": 0, "serviceProviderName": "", "serviceName": "ｔｖｋ２", "freqChannelNo": "18", "remoteInhibitFlag": 0 }, { "networkId": 32375, "transportStreamId": 32375, "serviceId": 24634, "serviceType": 1, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 0, "freeCAMode": 0, "channelNumber": 33, "branchNumber": 0, "serviceProviderName": "", "serviceName": "ｔｖｋ３", "freqChannelNo": "18", "remoteInhibitFlag": 0 }, { "networkId": 32738, "transportStreamId": 32738, "serviceId": 1044, "serviceType": 161, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 0, "freeCAMode": 0, "channelNumber": 45, "branchNumber": 0, "serviceProviderName": "", "serviceName": "日テレ臨時", "freqChannelNo": "25", "remoteInhibitFlag": 0 }, { "networkId": 32740, "transportStreamId": 32740, "serviceId": 1060, "serviceType": 161, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 0, "freeCAMode": 0, "channelNumber": 85, "branchNumber": 0, "serviceProviderName": "", "serviceName": "フジテレビ臨時", "freqChannelNo": "21", "remoteInhibitFlag": 0 }, { "networkId": 32742, "transportStreamId": 32742, "serviceId": 1078, "serviceType": 161, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 0, "freeCAMode": 0, "channelNumber": 77, "branchNumber": 0, "serviceProviderName": "", "serviceName": "臨時サービス", "freqChannelNo": "23", "remoteInhibitFlag": 0 }, { "networkId": 32739, "transportStreamId": 32739, "serviceId": 1183, "serviceType": 192, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 0, "freeCAMode": 0, "channelNumber": 268, "branchNumber": 0, "serviceProviderName": "", "serviceName": "Ｇガイド", "freqChannelNo": "22", "remoteInhibitFlag": 0 }, { "networkId": 32391, "transportStreamId": 32391, "serviceId": 23608, "serviceType": 1, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 9, "freeCAMode": 0, "channelNumber": 91, "branchNumber": 1, "serviceProviderName": "", "serviceName": "ＴＯＫＹＯ　ＭＸ１", "freqChannelNo": "16", "remoteInhibitFlag": 0 }, { "networkId": 32391, "transportStreamId": 32391, "serviceId": 23609, "serviceType": 1, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 0, "freeCAMode": 0, "channelNumber": 92, "branchNumber": 1, "serviceProviderName": "", "serviceName": "ＴＯＫＹＯ　ＭＸ１", "freqChannelNo": "16", "remoteInhibitFlag": 0 }, { "networkId": 32391, "transportStreamId": 32391, "serviceId": 23610, "serviceType": 1, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 0, "freeCAMode": 0, "channelNumber": 93, "branchNumber": 1, "serviceProviderName": "", "serviceName": "ＴＯＫＹＯ　ＭＸ２", "freqChannelNo": "16", "remoteInhibitFlag": 0 }, { "networkId": 32391, "transportStreamId": 32391, "serviceId": 23615, "serviceType": 161, "tmporaryServiceFlag": 0, "contract": 0, "remoteControlKeyId": 0, "freeCAMode": 0, "channelNumber": 98, "branchNumber": 1, "serviceProviderName": "", "serviceName": "ＴＯＫＹＯ　ＭＸ臨時", "freqChannelNo": "16", "remoteInhibitFlag": 0 } ] }GET /chEpg/channelLogoDataGet?broadcastingType=2 HTTP/1.1
-Host: 192.168.11.101:64210
-
-HTTP/1.1 200 OK
-CONTENT-TYPE: application/binary
-DATE: Sun, 12 Jan 2020 20:27:41 GMT
-LAST-MODIFIED: Tue, 24 Oct 2017 02:10:31 GMT
-CONTENT-LENGTH: 11611
-
-���U�\P�R���>������'^U]U]]P����Q�?�]R 
-��U|hi픟O��1_\��d� ĝ�Irt���������w*D{��r�|
-	_́Uu]�Ue�.�吒Z��P���J�n��!o�Ž���ޞ�>KX�T©���`������m�e�Oobw��Z{�;T1:>������U��eV&�*C�kM4���B9җo9D�E�����R��x(i��BsrB�T5M���~9K`�Б���Ek���$W�`z���·�����R�5^s3�[Q]IL�g;5~>a��8��3��FrFEne��GN�����Wue������MC��.w�cM
- o���u�,��B �^����t�P� +~Bb��=S���8�I��gRR0�!��h_ы=~��J��c��_L]
-9u'f��X�[w����DE���KA�f����`�Ef�i/�充��%�a��Kn��+t��_�����z��#�O����q�'Fo�"�Mꖅ
-�#���}]�e��Ò���T��҄�=�X��{P��{��'I�T��Dgd����_,�޻��ה��R�)R�����4@(�1.����Ǔ�C�UP��r�^b��I�I����7�	ى����z9gP�� �j�Y�4��sڳ;h�:������YU�e���f�b>Ԣ��v4�z-*f��$�����H��D�.�G� �0hb�	��>ޞ�YSPF��0��8��ʢ
-�ӔН!o�M����'^]]U]]^���ݛNS���ó��=�2:֍
-�������T�tQ�=?�ҊZ
-��Ə����"P������z�b9Y��ۚ��[�\���������U!k�$~
-\�4�����E���(�;׳a?��-u����]��aʢ-������� iT�>���_�C�'h�/�`��Td���
-�P�^�=̌��k4��b�18���e��b[��������)s��=�^]+���U��q�RoDO
-,\Y�[܀��(���;�L�؀��ybae� >�X�G�B[Z�ᄥ�I��������ZRg���kSM��2!n#�r	BT�!ܡ݂i0�es�������v)�bc�ן����eF��>c�N���x~�6��/���L\!��n:U����J@�~��c�ˢ�$\|Q[����/{�D��L=w�^C�q�:
-�QaQ^^]uO_�|
-q�/z}/�bE���t�9&��j�|l@�	#]7��:M@bf�#�]%!m�f����\��Gn��E�ө���W��ോ�N��ށ�O8��{�VK�Q�D��i�������ץ���<�������p3�� X�}}O��nS���=䚇cU�a9�?�Y�����@9=�?M]�T��H��'vH'¿��р����D�0R���E�}U��)��S\Z|�G*d���g�ę���x�!@�UU��G�?6��T��I�u�0b�>����������C��������'g$1�����"'�L�������������������XS���ó��=�2:֍
-�������T�tQ���[����*�ώ�q�i$>,��je�����9�髯3�o����T������Tvӥ�y�}'����_�˓�(	��W�!�|s��`ڄ䅅-�K�S�����`�z�{��""�L?�o��ǄR{�HAe�Q]���c���.}��'��s�:j��EU���N���/��;����*|,��<M��|L�H��ˀ���I.s{��Q�V;_V^��
-�Q]I|T#u}9s���ۭ���� �!V"���!
-�W��������Z�)5l�L�R$a��	E_�)���H��i0�M���f�fʰ��z�ƕ�;�<�^�:ZT�����4�d���<��}���_�C��8��YD�#��Qs�I:<�|���v�������
-��Ɉ����Wn����>�F�3#���+�� ����dƌNx������\6�=��8��H �� Q',"]_��]X��_ȁ5?6�����J~d�x��T^NHR� �ߎ��</����������������ӛ��XS���ó��=�2:֍
-�������T�tQ�=����*�ώ�q�i$>,��je�����9�髯3�o����T������Tvӥ�y�}'����_�˓�(	��W�!�|s��`ڄ䅅-�K�S�����`�z�{��""�L?�o��ǄR{�HAe�Q]���c���.}��'��s�:j��EU���N���/��;����*|,��<M��|L�H��ˀ���I.s{��Q�V;_V^��
-�Q]I|T#u}9s���ۭ���� �!V"���!
-�W�л=�
-������0mVr����q�&�M��,�B�^� ��/��%�Ho����+�7�����5��a�M��_	�
-�/��y�ę[����@\Y�G]��0~Vk^q����犃��)c
-�m,���ĺc�Ȍu�\:<��z�m���,0�zw��_i	��M�n9x"�����	i��!ך7�ΧY�@T.k�MV1f�f���Eh����!ξ�X�''+��頳2��8�	���`�K������/��������������������XS���ó��JN^��զ�,���
-y&����^�ҊZ
-�Կ4����gALE5=�a�^.�ѐ�Աς���J�� �%y:���_�T躁����@� "�����׵Z����>��� c>���ų�����<3c ���B�-�l�̌d �0��0���������b2 ���m�"���jN� �����=�Q>��+�N����/�lmŁ��<m�X'���6���w����{P��|x|
-W/V���wm��i���jXW�������&ӤCx�U��CVZ]Y�����V_��=�
-��Sxj4�9Y��?��u43�=��9�S��D��A"�d���F�ݯH�����I���c�u]-��� V�Dԗ�����~����ls������SKlx�f���=�� ������U�eŭ�'1��=7��>}N�*n�e��XEK!�h ����)ؖuY�OoQB�Z������8��4��7sy�f�u�K``���q灟��C4�[1݈�@�F�'��RJ�"ϙ׃3��v���~/���Ɯ9c���ƙ�����������������ڐ����������ϝ��ݝ���������OQ=���������p܏^���@$a�}cZ1�[�NSI�ma��4�o���׼!��|\�����[��x��ޙ-CU���i�
-e��͎
-�٤U���r�57{��j��}�
-�Ϙ�w�c������Q�����M~,���0���]�.NxL�vcν?e�)�{��\��N�}S�w��;�F��혮��Ȏ?���2`�o�����z7&L���������;Se;8��7�1l�΀���W!+��*�{�CAȢ��ilVo��~R��V1�VI
-�֝�������3����Q��Ɯ9c���Ɲ�����������������ڐ����������ϝ��ݝ���������OQ=���������p܏^���@$a�}cZ1�[�NSI�ma��4�o���׼!��|\�����[��x��ޙ-CU���i�
-e��͎
-�٤U���r�57{��j��}�
-�Ϙ�w�c������Q�����M~,���0���]�.NxL�vcν?e�)�{��\��N�}S�w��;�F��혮��Ȏ?���2`�o�����z7&L���������;Se;8��7�1l�΀���W!+��*�{�CAȢ��ilVo��~R��V1�VI
-�֝�������3����W����c��������������������ڐ����������ϝ��ݝ���������OQ=���������Gq,^��"ۀ�w|�
-'�mc�_]�w�
-�1M��N;w�t�%��,��aBmXr�^�E�❥��!:��R}�wa���m>�g�=8כ�(��|��cF��:�z�Q}ʝB�b�ȞI��1V
- e��GD)s\j�[ȉ����J-�%g���w
-�Q\xe�Mj.���:������=k�2,FAY����1�h܃����}o��W��]躚yF�+ƫO�67��/��za�&�=8,�&����=��t�N	Н���q�m�������k��J^�yT/�M��;Ѝɺ@�9��S~X|l-U����&=r	�i{��P�E�;�m�������1y��󝝝�����3��7F.<����c��������������������ڐ����������ϝ��ݝ���������OQ=���������Gq,^��"ۀ�w|�
-'�mc�_]�w�
-�1M��N;w�t�%��,��aBmXr�^�E�❥��!:��R}�wa���m>�g�=8כ�(��|��cF��:�z�Q}ʝB�b�ȞI��1V
- e��GD)s\j�[ȉ����J-�%g���w
-�Q\xe�Mj.���:������=k�2,FAY����1�h܃����}o��W��]躚yF�+ƫO�67��/��za�&�=8,�&����=��t�N	Н���q�m�������k��J^�yT/�M��;Ѝɺ@�9��S~X|l-U����&=r	�i{��P�E�;�m�������1y��󝝝�����3��9�. ����c��������̝�����������ڐ����������ϝ��ݝ���������OQ=��������� T�X���TW����f�v��g�x�%����u����c��ǡ
-���㉦�l۝�/���e��$y��_ʘ��	��A���/���?�ϖM�=�2!�;���,�/�#����k���Q;I�Gn$���}�<fN�̊��^�Q���	�9�<��� V�~Fɝ2��;��a��]F�l���B
-C�=X�_�P��9�Ň�:-�ޝ���͢���c�](��S���eN���N��A�@.W�^��$$� '����ʾ0R)�4�*� 4�VG�P#Cv�Z�Y>`��3d㬥|��\P�W�-*��Ԉ�ǧ>��������3���f����c��������ϝ�����������ڐ����������ϝ��ݝ���������OQ=��������� T�X���TW����f�v��g�x�%����u����c��ǡ
-���㉦�l۝�/���e��$y��_ʘ��	��A���/���?�ϖM�=�2!�;���,�/�#����k���Q;I�Gn$���}�<fN�̊��^�Q���	�9�<��� V�~Fɝ2��;��a��]F�l���B
-C�=X�_�P��9�Ň�:-�ޝ���͢���c�](��S���eN���N��A�@.W�^��$$� '����ʾ0R)�4�*� 4�VG�P#Cv�Z�Y>`��3d㬥|��\P�W�-*��Ԉ�ǧ>��������3���B����c��������Ν�����������ڐ����������ϝ��ݝ���������OQ=��������� T�X���TW����f�v��g�x�%����u����c��ǡ
-���㉦�l۝�/���e��$y��_ʘ��	��A���/���?�ϖM�=�2!�;���,�/�#����k���Q;I�Gn$���}�<fN�̊��^�Q���	�9�<��� V�~Fɝ2��;��a��]F�l���B
-C�=X�_�P��9�Ň�:-�ޝ���͢���c�](��S���eN���N��A�@.W�^��$$� '����ʾ0R)�4�*� 4�VG�P#Cv�Z�Y>`��3d㬥|��\P�W�-*��Ԉ�ǧ>��������3���N��՜*c���՘�����������������ڐ����������ϝ��ݝ���������OQ=���f�����@T�^���$4��͔"bG��(����O�U����x��������K��Z&#��}c�[��J���=���u�f�� �]u�+iP����vƎ뜕v<�h�6�R����N��!uC�6�p�#a�}�� �՝���w��{�w���is�x�hy�U�RS�]��b�/�h�|�sz�g���t덃O����	��5���I.?xg��'؋
-R��vעSJ����������;Rϛ�w��U�]Zl��G������ϝ�������3��tD����ڜ%c���ڝ�����������������ڐ����������ϝ��ݝ���������OQ=���g�����@��^���t���I!f��,\��]�5i�&��i�	��0Q����Z1�rg��fF����ÞI�ˠ�]�?�qj���w�>EO��$T��3��E��1��K0���)
-�✟m?�r1���+�do��1i߼���!4J�"4:� L&�.I������Ν��anUۤK��%�u��,�;F��պ ���s=��#����Rv��u��ݣ��I0�`��Π4�
-t���c��ք5BY��2��Z��Ð�����ߝ�������3��r+��������������������4�]R 
-���]vt|��9����o��.�� i���4��>E���
-�pS,se"��(>��%s�I��ϲ�� ��i�RMR-~v�#�ںJoW��F�V�#���(p��V�{� �2Ֆ���R�-�f�:GFb�֭�m� o�a`g��N�3�rN��Ҫ�&\=��\�Io[*�f�F���'q�l��t�F�cC��M� I:GmlI�H��N,�� �z6���?��n�J*__��X��W�p(@n# =�\�F)t��U٠.����FB��UI�ɭw�#-`P�^h=ml�h��z	M��}����+��c���+�����ڝ��������?��ڐ����������ϝ��ݝ���������OQ=���������P,��*V�|m��5,=-
-j�0��/6�X��� }bl�-o�[v"��Z��������?��[َ���6o�����U�棺;�A�^��=u=kܞ� ��C��bIT?���>x�.M�%���޻�5��
-�[��l���ן�
-3�'��p��D�3COg>z�g�}0�ԚZ�ᨌ��E�����Z0��#�������똱��vǢ@ ��ϔ��D\A�7���1�Ny��X�t�J-Y��V��D��0�}�ߞ�j�Ih��t�}�5��a��<��31x��=Jh�~;!���s�������^
-!<*R��u^�0b�=[������!ht�ֿ���o2���%�n���"�!�E����>蝝������3���Q)S��+��c���+�����՝��������?��ڐ����������ϝ��ݝ���������OQ=���������P,��*V�|m��5,=-
-j�0��/6�X��� }bl�-o�[v"��Z��������?��[َ���6o�����U�棺;�A�^��=u=kܞ� ��C��bIT?���>x�.M�%���޻�5��
-�[��l���ן�
-3�'��p��D�3COg>z�g�}0�ԚZ�ᨌ��E�����Z0��#�������똱��vǢ@ ��ϔ��D\A�7���1�Ny��X�t�J-Y��V��D��0�}�ߞ�j�Ih��t�}�5��a��<��31x��=Jh�~;!���s�������^
-!<*R��u^�0b�=[������!ht�ֿ���o2���%�n���"�!�E����>蝝������3����)T��+��c���+�����ԝ��������?��ڐ����������ϝ��ݝ���������OQ=���������P,��*V�|m��5,=-
-j�0��/6�X��� }bl�-o�[v"��Z��������?��[َ���6o�����U�棺;�A�^��=u=kܞ� ��C��bIT?���>x�.M�%���޻�5��
-�[��l���ן�
-3�'��p��D�3COg>z�g�}0�ԚZ�ᨌ��E�����Z0��#�������똱��vǢ@ ��ϔ��D\A�7���1�Ny��X�t�J-Y��V��D��0�}�ߞ�j�Ih��t�}�5��a��<��31x��=Jh�~;!���s�������^
-!<*R��u^�0b�=[������!ht�ֿ���o2���%�n���"�!�E����>蝝������3���)V����������
-�����l2�]R 
-��U{hi픟O��1_\��d� ĝ9�'��Q��x=�.�vC�1��"B"pX�!޷�:iY���5A?���^�C�[��J�-��E��!����'al4�"\'�7�2���/�*����]�GMd7��i�Kn$�+\��WŨiW��*��[$^��I[a�Fdt}�`���%�!��Bt�� �Sg�L�v�\;WD.	؅���@�g uSpJ������d�k�k��2�7��"�'g$1����������������������ֽl2�]R 
-��U{hi픟O��1_\��d� ĝ9�'��Q��x=�.�vC�1��"B"pX�!޷�:iY���5A?���^�C�[��J�-��E��!����'al4�"\'�7�2����h�-I�)<n���uz1�z������,�u�����r��rq5d.+nN��\vg�����w#N�-��PhB?K��.���Y���R'pi�L� �F2�8A'O����b]o�q�q��1ÊɄY��j�h��z	M���������������������l2�]R 
-��U{hi픟O��1_\��d� ĝ9�'��Q��x=�.�vC�1��"B"pX�!޷�:iY���5A?���^�C�[��J�-��E��!����'al4�"\'�7�2���/�*����]�GMd7��i�Kn$�+\��WŨiW��*��[$^��I[a�Fdt}�`���%�!��Bt�� �Sg�L�v�\;WD.	؅���@�g uSpJ������d�k�k��2�7��"�'g$1����������Ɯ9c���Ɲ�����������������ڐ����������ϝ��ݝ���������OQ=���������p܏^���@$a�}cZ1�[�NSI�ma��4�o���׼!��|\�����[��x��ޙ-CU���i�
-e��͎
-�٤U���r�57{��j��}�
-�Ϙ�w�c������Q�����M~,���0���]�.NxL�vcν?e�)�{��\��N�}S�w��;�F��혮��Ȏ?���2`�o�����z7&L���������;Se;8��7�1l�΀���W!+��*�{�CAȢ��ilVo��~R��V1�VI
-�֝�������3��ܵM����c��������ȝ�����������ڐ����������ϝ��ݝ���������OQ=��������� T�X���TW����f�v��g�x�%����u����c��ǡ
-���㉦�l۝�/���e��$y��_ʘ��	��A���/���?�ϖM�=�2!�;���,�/�#����k���Q;I�Gn$���}�<fN�̊��^�Q���	�9�<��� V�~Fɝ2��;��a��]F�l���B
-C�=X�_�P��9�Ň�:-�ޝ���͢���c�](��S���eN���N��A�@.W�^��$$� '����ʾ0R)�4�*� 4�VG�P#Cv�Z�Y>`��3d㬥|��\P�W�-*��Ԉ�ǧ>��������3���&����������m���������v� ����������y���d�����
-���JN^��զ�,���
-y&���
-�st����t�_�����|K��р�Q������9� co������ZK]]Q
-�D78���Uj3��v���l������c��������Ɲ�����������ڐ����������ϝ��ݝ���������OQ=���������p	��^��|y��xM�Ih-��O]�bb�H��G�8�I��\�
-jl���
-DI�m��$�}������F`��v?�mu��� s(�靥YN���<6���`��.4�)���C�u��:���݌�9�Ӯ������`�ݛ��yf��#ZiжV��v_��f6���C��Ѿ'��|�M+�`���
-�s��V^�}��=o����؋7�zY+ϱ	��r3����0�}G����?����qh��!a���r�Y�z�NC�"��P_g��6���*�w[���-ȷR��/��r\"�-S����gze�"���훋r�|_�H1��������3����?�����c���������������������ڐ����������ϝ��ݝ���������OQ=���������p	��^��|y��xM�Ih-��O]�bb�H��G�8�I��\�
-jl���
-DI�m��$�}������F`��v?�mu��� s(�靥YN���<6���`��.4�)���C�u��:���݌�9�Ӯ������`�ݛ��yf��#ZiжV��v_��f6���C��Ѿ'��|�M+�`���
-�s��V^�}��=o����؋7�zY+ϱ	��r3����0�}G����?����qh��!a���r�Y�z�NC�"��P_g��6���*�w[���-ȷR��/��r\"�-S����gze�"���훋r�|_�H1��������3���S?�����c��������������������ڐ����������ϝ��ݝ���������OQ=���������p	���X::�k-�T�٥���cՐ�pjbɦ���=�/���+rJJ,��8��a��!,�w�A�4a'L�
-���N�q2�.�i�,��rEр��0hhgߊk'g�y�
-�� ���Q�l�����w�}��i�P�y����P��Z�'�+�3W�/�];���N9���5���*�#��^��x��M��y���w5k!"L�]*C��q
-������M�׎?5�ⓞx�Y�	�yB�ʕ2j=3��y:ۚ`l�I������
-ÑU�{�m ���$�xA1���^�����(�=�)����e�e��CX��:AQd�[y�㋺eՆ���`�������
-���������3���1�����c���������������������ڐ����������ϝ��ݝ���������OQ=���������p	��^��|y��xM�Ih-��O]�bb�H��G�8�I��\�
-jl���
-DI�m��$�}������F`��v?�mu��� s(�靥YN���<6���`��.4�)���C�u��:���݌�9�Ӯ������`�ݛ��yf��#ZiжV��v_��f6���C��Ѿ'��|�M+�`���
-�s��V^�}��=o����؋7�zY+ϱ	��r3����0�}G����?����qh��!a���r�Y�z�NC�"��P_g��6���*�w[���-ȷR��/��r\"�-S����gze�"���훋r�|_�H1��������3����?�GET /status/updateCheck HTTP/1.1
-Host: 192.168.11.101:64210
-
-HTTP/1.1 200 OK
-CONTENT-TYPE: application/json; charset=utf-8
-DATE: Sun, 12 Jan 2020 20:27:44 GMT
-CONTENT-LENGTH: 34
-
-{ "errorcode": 0, "existFlag": 0 }
