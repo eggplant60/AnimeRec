@@ -1,0 +1,44 @@
+<md-dialog class="conf-dialog" aria-label="conf-display">
+
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<h2>表示設定</h2><span flex></span>
+		</div>
+	</md-toolbar>
+
+	<md-dialog-content layout="row" layout-align="space-around start" layout-fill>
+		
+		<div flex layout="column" layout-align="start center">
+			<h4>テーマ</h4>
+			<div>
+				<md-radio-group ng-model="conf.theme">
+					<md-radio-button value="light"> ライト </md-radio-button>
+					<md-radio-button value="dark"> ダーク </md-radio-button>
+				</md-radio-group>
+			</div>
+		</div>
+
+		<div flex layout="column" layout-align="start center">
+			<h4>列数</h4>
+			<div>
+				<md-select ng-model="conf.columns" aria-label="columns?">
+					<md-option ng-repeat="i in [1,2,3,4,5,6,7,8]" ng-value="i">
+						{{ i }}
+					</md-option>
+				</md-select>
+			</div>
+		</div>
+
+	</md-dialog-content>
+
+	<md-dialog-actions layout="row">
+		<md-button ng-click="cancel()">
+			キャンセル
+		</md-button>
+		<span flex></span>
+		<md-button ng-click="ok()">
+			OK
+		</md-button>
+	</md-dialog-actions>
+
+</md-dialog>

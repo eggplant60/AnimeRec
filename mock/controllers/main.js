@@ -3,6 +3,7 @@
 
 	angular.module('app')
 		.controller('AppCtrl', [
+			'$scope',
 			'$log', 
 			'$timeout', 
 			'$mdDialog',
@@ -10,7 +11,7 @@
 			'CommonService', 
 			AppCtrl]);
 
-	function AppCtrl($log, $timeout, $dialog, api, common) {
+	function AppCtrl($scope, $log, $timeout, $dialog, api, common) {
 		$log.debug('AppCtrl: start ---------------------');
 
 		var vm = this;

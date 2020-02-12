@@ -21,7 +21,7 @@ angular.module('app')
 			},
 			display: {
 				columns: 7,
-				theme:   'black'
+				theme:   'light'
 			}
 		};
 
@@ -170,7 +170,7 @@ angular.module('app')
 						prog.event_id   === resv.event_id) {
 							Object.assign(prog, resv); // 結合
 							//continue;
-							$log.debug(prog.event_id, prog.item_id, prog.dvr_id, prog.start_date, prog.title);
+							//$log.debug(prog.event_id, prog.item_id, prog.dvr_id, prog.start_date, prog.title);
 					}
 				});
 			});
@@ -238,7 +238,7 @@ angular.module('app')
 			// 	$log.debug('dialog: answer');
 			// 	$mdDialog.hide(answer);
 			// };
-		}	
+		}
 
 	}])
 

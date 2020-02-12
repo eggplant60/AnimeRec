@@ -9,9 +9,11 @@
 </head>
 <body>
 	<!-- Contents -->
-	<div ng-cloak ng-controller="AppCtrl as ctrl" layout="row" layout-fill>
-		<sidebar></sidebar>
-		<content></content>
+	<div ng-cloak ng-controller="AppCtrl as ctrl" layout-fill>
+		<div md-theme="{{ ctrl.conf.display.theme }}" md-theme-watch="" layout="row" layout-fill>
+			<sidebar></sidebar>
+			<content></content>
+		</div>
 	</div>
 	
 	<!-- Angular Material requires Angular.js Libraries -->

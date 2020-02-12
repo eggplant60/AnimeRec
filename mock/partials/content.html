@@ -1,4 +1,4 @@
-<div class="main-content" layout="row" >
+<div class="main-content" layout="row">
 	<div ng-repeat="column in ctrl.programList">
 
 		<div class="dow-column">
@@ -16,7 +16,8 @@
 							ng-repeat="program in column.rowPrograms | filter:ctrl.recFilter">
 						<img ng-src="{{ 'img/channels/icon_' + program.service_id + '.PNG' }}" class="md-avatar"/>
 						<div class="md-list-item-text" layout="column">
-							<a ng-href="{{ctrl.searchEngine + (program.title | programTitle)}}" target="_blank">
+							<a ng-class="{'dark-a': ctrl.conf.display.theme === 'dark'}"
+								ng-href="{{ctrl.searchEngine + (program.title | programTitle)}}" target="_blank">
 								{{program.title | programTitle}}
 							</a>
 							<p>{{ program.description | extractDate }}</p>

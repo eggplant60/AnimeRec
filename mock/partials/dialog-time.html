@@ -6,22 +6,28 @@
 		</div>
 	</md-toolbar>
 
-	<h4>番組開始時刻のフィルタリングを設定します。</h4>
+	
 
-	<md-dialog-content layout="column" layout-align="center" layout-fill>
+	<md-dialog-content layout="column" layout-align="center center" layout-fill>
 
-		<div flex layout="row" layout-align="center center">
-			<div>開始時刻(最小) = {{ conf.from.toString().padStart(2, '0') }}:00</div>
-			<md-slider md-discrete ng-model="conf.from"
-				step="2" min="5" max="29" aria-label="from">
-			</md-slider>
-		</div>
+		<h4>番組開始時刻のフィルタリングを設定します。</h4>
 
-		<div flex layout="row" layout-align="center center">
-			<div>開始時刻(最大) = {{ conf.to.toString().padStart(2, '0') }}:00</div>
-			<md-slider md-discrete ng-model="conf.to"
-				step="2" min="5" max="29" aria-label="to">
-			</md-slider>
+		<div>
+			<div flex layout="row" layout-align="center center">
+				<div>開始時刻(最小) = {{ conf.from.toString().padStart(2, '0') }}:00</div>
+				<span flex></span>
+				<md-slider md-discrete ng-model="conf.from"
+					step="2" min="5" max="29" aria-label="from">
+				</md-slider>
+			</div>
+
+			<div flex layout="row" layout-align="center center">
+				<div>開始時刻(最大) = {{ conf.to.toString().padStart(2, '0') }}:00</div>
+				<span flex></span>
+				<md-slider md-discrete ng-model="conf.to"
+					step="2" min="5" max="29" aria-label="to">
+				</md-slider>
+			</div>
 		</div>
 
 	</md-dialog-content>
