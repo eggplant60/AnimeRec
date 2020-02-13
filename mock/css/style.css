@@ -34,6 +34,9 @@
 	width: 100%;
 	overflow-x: auto;
 }
+.dark-content {
+	background: #212121;
+}
 
 .dow-column {
 	width: 350px;
