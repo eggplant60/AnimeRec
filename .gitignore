@@ -1,3 +1,4 @@
 log
 *.log
 research
+node_modules
