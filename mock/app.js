@@ -9,4 +9,9 @@ angular.module('app', ['ngMaterial', 'ngResource'])
 	})
 	.config(function($logProvider) {
 		$logProvider.debugEnabled(true);
+	})
+	.run(function($window) {
+		$window.scroll({
+			//behavior: 'smooth'
+		});
 	});

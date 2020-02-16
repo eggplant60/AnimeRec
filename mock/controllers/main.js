@@ -3,15 +3,15 @@
 
 	angular.module('app')
 		.controller('AppCtrl', [
-			'$scope',
 			'$log', 
 			'$timeout', 
 			'$mdDialog',
+			'$window',
 			'ApiService', 
 			'CommonService', 
 			AppCtrl]);
 
-	function AppCtrl($scope, $log, $timeout, $dialog, api, common) {
+	function AppCtrl($log, $timeout, $dialog, $window, api, common) {
 		$log.debug('AppCtrl: start ---------------------');
 
 		var vm = this;
@@ -26,6 +26,8 @@
 		
 		vm.inProcess = false;
 		vm.allShow = true;
+		vm.currentColumnId = 0;
+		//vm.columnWidth = document.querySelector('#column0');
 		
 		/* 
 		 * 番組表取得
@@ -75,10 +77,37 @@
 
 		mergeReserve();
 
+		/* 
+		 * スクロールボタン
+		 */
+		vm.scrollToAbs = (columnId) => {
+			if (columnId === -1) {
+				columnId = vm.programList.length - 1;
+			}
+			$log.debug('scrollToAbs(' + columnId + ')');
+			//$location.hash('column' + columnId);
+			//$scroll();
+			$window.scroll(353*columnId, 0, {behavior: 'smooth'});
+			vm.currentColumnId = columnId;
+		};
+
+		vm.scrollToRel = (rel) => {
+			//$log.debug(vm.columnWidth);
+			//$log.debug($window.scrollX);
+			//$log.debug('scrollToRel(' + rel + ')');
+			let tmp = vm.currentColumnId + rel;
+			if (tmp < 0) {
+				tmp = 0;
+			} else if (tmp > vm.programList.length-1) {
+				tmp = vm.programList.length-1;
+			}
+			vm.scrollToAbs(tmp);
+		};
+
 		/*
 		* 予約ボタン
 		*/
-		vm.onReserveButton = function(program) {
+		vm.onReserveButton = (program) => {
 			if (vm.inProcess) {
 				common.openInfo('更新処理が完了するまでお待ち下さい。');
 				$log.debug('on reserve: return due to another process');

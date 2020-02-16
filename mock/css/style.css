@@ -17,7 +17,6 @@
 	top: 0;
 	bottom: 0;
 	background-color: #333340;
-	margin-right: 3px;
 	z-index: 100;
 }
 
@@ -29,7 +28,7 @@
 
 .main-content {
 	position: relative;
-	left: 63px;
+	left: 60px;
 	height: 100%;
 	width: 100%;
 	overflow-x: auto;

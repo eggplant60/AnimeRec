@@ -1,11 +1,14 @@
-<div class="main-content" layout="row">
+<div class="main-content" layout="row" 
+		ng-class="{'dark-content': ctrl.conf.display.theme === 'dark'}">
 	<div ng-repeat="column in ctrl.programList">
 
-		<div class="dow-column">
+		<div ng-attr-id="{{ 'column' + $index }}" class="dow-column">
 			<!-- 日付 -->
 			<md-toolbar>
 				<div class="md-toolbar-tools">
 					<b>{{ column.label | date : 'M/d (EEE)' }}</b>
+					<span flex></span>
+					<p>{{ $index + 1 }}</p>
 				</div>
 			</md-toolbar>
 

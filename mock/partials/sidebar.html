@@ -4,10 +4,29 @@
 	<md-button class="sidebar-button">
 		<i class="material-icons">search</i>
 	</md-button>
-
+	
 	<!-- スケジュール -->
 	<md-button class="sidebar-button">
 		<i class="material-icons">schedule</i>
+	</md-button>
+	
+	<span flex></span>
+
+	<!-- ページ内スクロール -->
+	<md-button class="sidebar-button" ng-click="ctrl.scrollToAbs(0)">
+		<i class="material-icons">first_page</i>
+	</md-button>
+
+	<md-button class="sidebar-button" ng-click="ctrl.scrollToRel(-1)">
+		<i class="material-icons">chevron_left</i>
+	</md-button>
+
+	<md-button class="sidebar-button" ng-click="ctrl.scrollToRel(1)">
+		<i class="material-icons">chevron_right</i>
+	</md-button>
+
+	<md-button class="sidebar-button" ng-click="ctrl.scrollToAbs(-1)">
+		<i class="material-icons">last_page</i>
 	</md-button>
 
 	<span flex></span>
