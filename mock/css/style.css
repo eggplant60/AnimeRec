@@ -39,7 +39,7 @@
 
 .dow-column {
 	width: 350px;
-	margin-right: 3px;
+	margin-left: 3px;
 	height: calc(100vh - 90px);
 }
 

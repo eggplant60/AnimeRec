@@ -12,8 +12,8 @@ angular.module('app')
 				destination: 'external' // 'external'/'internal'	
 			},
 			genre: {
-				exclusive : true,
 				mainId : '107100',
+				exclusive : false,
 			},
 			time: {
 				from: 19,

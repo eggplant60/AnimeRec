@@ -28,6 +28,7 @@
 		vm.allShow = true;
 		vm.currentColumnId = 0;
 		//vm.columnWidth = document.querySelector('#column0');
+		const columnWidth = 353;
 		
 		/* 
 		 * 番組表取得
@@ -87,7 +88,7 @@
 			$log.debug('scrollToAbs(' + columnId + ')');
 			//$location.hash('column' + columnId);
 			//$scroll();
-			$window.scroll(353*columnId, 0, {behavior: 'smooth'});
+			$window.scroll(columnWidth*columnId, 0, {behavior: 'smooth'});
 			vm.currentColumnId = columnId;
 		};
 
