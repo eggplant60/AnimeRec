@@ -10,13 +10,15 @@ database=$(cat $CONF_PATH | jq -r '.database')
 
 echo "Create DB $database in $db_host:$db_port"
 
-createdb -h $db_host -p $db_port \
-	 --encoding='UTF-8'  --lc-collate='ja_JP.UTF-8' --lc-ctype='ja_JP.UTF-8' \
-	 --owner=$db_user --template=template0 \
-	 $database
+createdb -U $db_user \
+	-h $db_host -p $db_port \
+	--encoding='UTF-8'  --lc-collate='ja_JP.UTF-8' --lc-ctype='ja_JP.UTF-8' \
+	--owner=$db_user --template=template0 \
+	$database
 
 if [ "$?" == '0' ]; then
 	echo 'success!'
 else
 	echo 'failed!'
+	exit 1
 fi
