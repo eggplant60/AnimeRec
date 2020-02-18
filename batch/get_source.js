@@ -65,7 +65,7 @@ function getProgramsFromToday(delta) {
 				let fileName = jsonPath + date2YYYYmmdd(startDate) + '.json';
 				fs.writeFile(fileName, parsed, (err, data) => {
 					if (err) {
-						console.err(startQuery + ': ' + err);
+						console.error(startQuery + ': ' + err);
 					} else {
 						console.log(startQuery + ': finish, write');
 					} 
