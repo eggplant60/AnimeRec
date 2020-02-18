@@ -6,9 +6,13 @@
 
 Ubuntu 16.04 / 18.04
 
+サーバとクライアントは同じプライベートネットワークに存在。
+外部公開はしない(セキュリティ上および利用規約の問題のため)
+
 ## Setup
 
 環境を汚すのでDockerコンテナ内に構築することをおすすめします。
+~~検証済み環境: ubuntu:18.04 (docker)~~
 
 1. git clone
 
@@ -17,26 +21,24 @@ Ubuntu 16.04 / 18.04
 	# git clone https://github.com/eggplant60/AnimeRec.git
 	```
 
+1. 日本語環境の入った docker コンテナを build
+
+	```
+	# cd AnimeRec/docker
+	# docker build -t ubuntu:18.04_ja .
+	# ./docker_run.sh
+	```
+
 1. 必須パッケージのインストール
 
 	```
-	# cd AnimeRec
+	# cp /shared/install.sh ./
+	# chmod +x install.sh
 	# ./install.sh
 	```
+	途中でタイムゾーンを聞かれたときは Asia/Tokyo を選択
 
 1. PostgreSQL の設定
-
-	1. パスワード認証の有効化
-
-		```
-		# vi /etc/postgresql/??/main/pg_hba.conf
-		```
-
-		ファイル末尾に以下の1行を追加
-
-		```:/etc/postgresql/??/main/pg_hba.conf
-		host    all             all             192.168.11.1/32         md5
-		```
 
 	1. PostgreSQL 起動
 
@@ -47,7 +49,8 @@ Ubuntu 16.04 / 18.04
 	1. DBのユーザ設定
 
 		```
-		# cp conf/db.json.defalut conf/db.json
+		# cd work/AnimeRec/
+		# cp conf/db.json.default conf/db.json
 		# vi conf/db.json
 		```
 
@@ -64,6 +67,8 @@ Ubuntu 16.04 / 18.04
 	1. DB作成
 
 		```
+		# cd setup
+		# chmod +x 01_create_db.sh
 		# ./01_create_db.sh
 		Create DB anime_rec in localhost:5432
 		Password: [先程のパスワード]
@@ -116,12 +121,31 @@ Ubuntu 16.04 / 18.04
 		(2 rows)
 		```
 
+		確認後、`\q` でコンソールを抜ける
+		
 1. バッチ関連
+
+	1. CHAN-TORU の Cookie をコピー
+
+		Webブラウザで[CHAN-TORU](https://tv.so-net.ne.jp/chan-toru/login)にログイン
+
+		ログイン後、ブラウザの開発者ツール(F12を押すと出る)を使用して
+		CHAN-TORU の Cookie を表示させ、コピーしておく
+
+	1. 設定ファイルに貼り付け
+
+		```
+		# cp conf/chan_toru.json.default conf/chan_toru.json
+		# vi conf/chan_toru.json
+		```
+
+		先程の Cookie を JSON の "Cookie" の値に貼り付けて保存
+
 
 	1. 確認
 
 		```
-		# cd batch
+		# cd ../batch
 		# ./batch.sh
 		# ./batch.sh
 		./batch.sh: line 10: cd: /raid/work/animeRec/batch: No such file or directory
@@ -182,23 +206,7 @@ Ubuntu 16.04 / 18.04
 
 1. サーバサイド設定
 
-	1. CHAN-TORU の Cookie をコピー
-
-		Webブラウザで[CHAN-TORU](https://tv.so-net.ne.jp/chan-toru/login)にログイン
-
-		ログイン後、ブラウザの開発者ツール(F12を押すと出る)を使用して
-		CHAN-TORU の Cookie を表示させ、コピーしておく
-
-	2. 設定ファイルに貼り付け
-
-		```
-		# cp conf/chan_toru.json.default conf/chan_toru.json
-		# vi conf/chan_toru.json
-		```
-
-		先程の Cookie を JSON の "Cookie" の値に貼り付けて保存
-
-	3. 起動チェック
+	1. 起動チェック
 
 		```
 		# cd node
@@ -208,7 +216,7 @@ Ubuntu 16.04 / 18.04
 		```
 		上記のように表示されればOK
 
-1. フロントサイド設定
+1. フロントエンド設定
 
 	1. IPアドレス指定
 
@@ -232,5 +240,5 @@ Ubuntu 16.04 / 18.04
 		# cd /path/to/AnimeRec
 		# ./start.sh
 		```
-		ブラウザで "http:[IPアドレス]:8080/" にアクセスして番組表が表示されればOK
+		ブラウザで "http://[IPアドレス]:8080/" にアクセスして番組表が表示されればOK
 
