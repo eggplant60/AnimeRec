@@ -1,0 +1,7 @@
+{
+	"user": "user",
+	"host": "localhost",
+	"database": "anime_rec",
+	"password": "abc",
+	"port": 5432
+}
