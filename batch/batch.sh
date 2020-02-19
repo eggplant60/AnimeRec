@@ -1,7 +1,7 @@
 #!/bin/bash
 
-WORK_DIR='/raid/work/animeRec/batch'
-JSON_DIR='/raid/work/animeRec/batch/json'
+WORK_DIR='/AnimeRec/batch'
+JSON_DIR='/AnimeRec/batch/json'
 NODE='/usr/bin/node'
 PYTHON='/usr/bin/python'
 
