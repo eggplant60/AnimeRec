@@ -1,0 +1,7 @@
+{
+    "host": "192.168.11.205",
+    "http": "8085",
+    "node": "3005",
+    "image": "anime/rec2",
+    "container": "anime_rec2"   
+}

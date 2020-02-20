@@ -2,10 +2,10 @@
 
 ## 前提
 
-[CHAN-TORU](https://tv.so-net.ne.jp/chan-toru/login) のアカウント設定済み(Googleアカウント連携)
+- [CHAN-TORU](https://tv.so-net.ne.jp/chan-toru/login) のアカウントを設定済み(Googleアカウント連携)
 
-サーバとクライアントは同じプライベートネットワークに存在する
-外部公開はしない(セキュリティ上および利用規約の問題のため)
+- サーバとクライアントが同じプライベートネットワークに存在。
+	すなわち外部公開はしない(セキュリティおよび利用規約の問題のため)
 
 ## 検証済みホスト環境
 
@@ -26,26 +26,32 @@
 	# git clone https://github.com/eggplant60/AnimeRec.git
 	```
 
-1. サーバサイド・フロントエンドの公開ポート番号を設定
+1. ネットワーク設定
 
 	```
-	# cd AnimeRec
-	# vi conf/docker.json
+	# cd AnimeRec/conf
+	# cp system.json.default system.json
+	# vi system.json
 	```
 
-	他のサービスとかぶらないように2つのポート番号を設定(以下は例)
-	```:conf/docker.json
+	"host", "http", および "node" の値を host の環境に合わせて変更(以下は例)
+	```:conf/system.json
 	{
-		"http": "8084",
-		"node": "3004"
+		"host": "192.168.1.100",	// ホストのIPアドレス、またはホスト名
+		"http": "8084",				// フロントエンドのポート番号。他のサービスと重複させない
+		"node": "3004",				// サーバサイドのポート番号。他のサービスと重複させない
+		"image": "anime/rec",		// 本アプリでビルドするイメージ名。基本はそのまま
+		"container": "anime_rec"	// 本アプリで立ち上げるコンテナ名。基本はそのまま
 	}
 	```
+
+	注意: コメントは実際には書かないこと
 
 1. CHAN-TORU の認証設定
 
 	1. CHAN-TORU の Cookie をコピー
 
-		Webブラウザで[CHAN-TORU](https://tv.so-net.ne.jp/chan-toru/login)にログイン
+		適当なブラウザで[CHAN-TORU](https://tv.so-net.ne.jp/chan-toru/login)にログイン
 
 		ログイン後、ブラウザの開発者ツール(F12を押すと出る)を使用して
 		CHAN-TORU の Cookie を表示させ、コピーしておく
@@ -53,59 +59,38 @@
 	1. 設定ファイルに貼り付け
 
 		```
-		# cp conf/chan_toru.json.default conf/chan_toru.json
-		# vi conf/chan_toru.json
+		# cp chan_toru.json.default chan_toru.json
+		# vi chan_toru.json
 		```
 
 		先程の Cookie を JSON の "Cookie" の値に貼り付けて保存
 
-
-1. フロントエンド設定
-
-	```
-	# cd ../mock/conf
-	# cp environment.js.default environment.js
-	# vi environment.js
-	```
-
-	```JavaScript:environment.js
-	angular.module('app')
-		.value('express', {
-			address: "[ホストのIPアドレス]",
-			port   : "[2.で指定したnodeのポート番号]"
-		});
-	```
-
-
-1. Docker コンテナのビルド＆アタッチ
+1. Docker ビルド→ラン
 
 	```
-	# docker build -t "anime/rec" .
-	# ./docker_run.sh
+	# ./docker_build_run.sh
 	```
+	ターミナルの制御が得られるまでしばらく待つ
+
 	----------- ここから先はコンテナ内の作業 ---------------
-
 
 1. PostgreSQL の設定
 
-	1. PostgreSQL 起動
+	1. ユーザ作成
 
 		```
-		# /etc/init.d/postgresql start
-		```
-
-	1. DBのユーザ作成
-
-		```
-		# sudo -u postgres createuser -d -U postgres -P user
+		# cd /AnimeRec/setup/
+		# ./00_create_user.sh
+		 * Starting PostgreSQL 12 database server         [ OK ]
+		Create user user in localhost:5432
 		Enter password for new role: ("abc"と入力)
 		Enter it again: ("abc"と入力)
+		success!
 		```
 
 	1. DB作成
 
 		```
-		# cd /AnimeRec/setup
 		# ./01_create_db.sh
 		Create DB anime_rec in localhost:5432
 		Password: ("abc"と入力)
@@ -209,29 +194,26 @@
 
 	ここまで動作することが確認できたら Ctrl-C で停止させてOK
 
-1. サーバサイドの起動チェック
-
-	```
-	# cd /AnimeRec/node
-	# node app.js
-	checkAuthenticated()
-	Node.js is listening to localhost:3001
-	```
-	上記のように表示されればOK. Ctrl-C で停止させる
-
 1. サーバサイド＆フロントエンドの起動
 
 	```
 	# cd /AnimeRec
 	# ./start.sh
+	Available on:
+	http://127.0.0.1:8080
+	http://172.17.0.3:8080
+	Hit CTRL-C to stop the server
+	checkAuthenticated()
+	Node.js is listening to localhost:3001
 	```
-	Ctrl-P Q でコンテナから抜ける
+	上記のように、サーバサイドとフロントエンドが待受状態になればOK.
+	確認後、Ctrl-P Q でコンテナから抜ける
 
 	------------ コンテナ内の作業はここまで ---------------	
 
 1. ブラウザでの動作確認
 
-	"http://[ホストIPアドレス]:[2.で設定したhttpのポート番号]/" に
+	"http://[2.の"host"]:[2.の"http]/" に
 	アクセスして番組表が表示されればOK
 
 1. CRON登録

@@ -1,7 +1,6 @@
 #!/bin/bash
 
 OPT_APT='-y'   # 対話的にインストールする場合はコメントアウト
-BASH_RC='/root/.bashrc'
 
 apt-get update
 apt-get install $OPT_APT curl gnupg lsb-release ca-certificates jq sudo
@@ -24,4 +23,4 @@ apt-get install $OPT_APT python3-dev python3-pip libpq-dev
 pip3 install -U psycopg2
 pip3 install requests
 rm /usr/bin/python
-ln -s /usr/bin/python3.6 /usr/bin/python
+ln -s /usr/bin/python3 /usr/bin/python
