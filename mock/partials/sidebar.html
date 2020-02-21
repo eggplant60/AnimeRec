@@ -1,13 +1,15 @@
 <div class="sidebar" layout="column" layout-align="end center">
 
 	<!-- 検索 -->
-	<md-button class="sidebar-button">
+	<md-button class="sidebar-button" ng-disabled="true">
 		<i class="material-icons">search</i>
+		<md-tooltip md-direction="right">開発中</md-tooltip>
 	</md-button>
 	
 	<!-- スケジュール -->
-	<md-button class="sidebar-button">
+	<md-button class="sidebar-button" ng-disabled="true">
 		<i class="material-icons">schedule</i>
+		<md-tooltip md-direction="right">開発中</md-tooltip>
 	</md-button>
 	
 	<span flex></span>
@@ -15,18 +17,22 @@
 	<!-- ページ内スクロール -->
 	<md-button class="sidebar-button" ng-click="ctrl.scrollToAbs(0)">
 		<i class="material-icons">first_page</i>
+		<md-tooltip md-direction="right">←一番左へ</md-tooltip>
 	</md-button>
 
 	<md-button class="sidebar-button" ng-click="ctrl.scrollToRel(-1)">
 		<i class="material-icons">chevron_left</i>
+		<md-tooltip md-direction="right">←1列左へ</md-tooltip>
 	</md-button>
 
 	<md-button class="sidebar-button" ng-click="ctrl.scrollToRel(1)">
 		<i class="material-icons">chevron_right</i>
+		<md-tooltip md-direction="right">1列右へ→</md-tooltip>
 	</md-button>
 
 	<md-button class="sidebar-button" ng-click="ctrl.scrollToAbs(-1)">
 		<i class="material-icons">last_page</i>
+		<md-tooltip md-direction="right">一番右へ→</md-tooltip>
 	</md-button>
 
 	<span flex></span>
@@ -34,17 +40,20 @@
 	<!-- 更新 -->
 	<md-button class="sidebar-button" ng-disabled="ctrl.inProcess" ng-click="ctrl.onRefresh()">
 		<i class="material-icons">refresh</i>
+		<md-tooltip md-direction="right">更新</md-tooltip>
 	</md-button>
 
 	<!-- フィルター -->
 	<md-button class="sidebar-button" ng-click="ctrl.onFilter()">
 		<i class="material-icons">filter_list</i>
+		<md-tooltip md-direction="right">全番組/録画予約済み</md-tooltip>
 	</md-button>
 	
 	<!-- 設定 -->
 	<md-menu md-offset="30 -20" layout="column" layout-align="center center">
 		<md-button class="sidebar-button" ng-click="$mdMenu.open($event)">
 			<i md-menu-origin="" class="material-icons">settings</i>
+			<md-tooltip md-direction="right">設定</md-tooltip>
 		</md-button>
 		<md-menu-content width="2">
 			<md-menu-item>
