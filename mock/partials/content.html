@@ -24,34 +24,34 @@
 									ng-href="{{ctrl.searchEngine + (program.title | programTitle)}}" target="_blank">
 									{{program.title | programTitle}}
 								</a>
-								<md-tooltip md-direction="top">Google画像検索を開く</md-tooltip>
+								<md-tooltip md-direction="top" md-delay="500">Google画像検索を開く</md-tooltip>
 							</div>
 							<p>{{ program.description | extractDate }}</p>
 							<p>{{ program.summary | summaryShort }}</p>
 							<div layout="row" layout-align="start center">
 								<md-button class="md-icon-button">
 									<i class="material-icons" ng-style="{ color: 'grey'}">chat_bubble_outline</i>
-									<md-tooltip md-direction="bottom">開発中</md-tooltip>
+									<md-tooltip md-direction="bottom" md-delay="1000">開発中</md-tooltip>
 								</md-button>
 								<md-button class="md-icon-button">
 									<i class="material-icons" ng-style="{ color: 'grey'}">
 										repeat
 									</i>
-									<md-tooltip md-direction="bottom">開発中</md-tooltip>
+									<md-tooltip md-direction="bottom" md-delay="1000">開発中</md-tooltip>
 								</md-button>
 								<md-button class="md-icon-button">
 									<i class="material-icons" ng-style="{ color: program.item_id ? 'red' : 'grey'}"
 										ng-click="ctrl.onReserveButton(program)">
 										favorite_border
 									</i>
-									<md-tooltip md-direction="bottom">録画予約/取り消し</md-tooltip>
+									<md-tooltip md-direction="bottom" md-delay="500">録画予約/取り消し</md-tooltip>
 								</md-button>
 								<md-button class="md-icon-button">
 									<i class="material-icons" ng-style="{ color: 'grey'}"
 											ng-click="ctrl.openDetail(program)">
 										more_horiz
 									</i>
-									<md-tooltip md-direction="bottom">デバッグ用詳細</md-tooltip>
+									<md-tooltip md-direction="bottom" md-delay="500">デバッグ用詳細</md-tooltip>
 								</md-button>
 							</div>
 						</div>

@@ -5,26 +5,6 @@ const summaryMaxLen = 70;
 angular.module('app')
 	.service('CommonService', ['$log', '$filter', '$timeout', '$mdDialog', 'ApiService', function($log, $filter, $timeout, $dialog, api) {
 
-		this.defaultConf = {
-			rec: {
-				condition: 'week',      // 'week'/'day'/'once'
-				quality  : 'normal',    // 'normal'/'high'
-				destination: 'external' // 'external'/'internal'	
-			},
-			genre: {
-				mainId : '107100',
-				exclusive : false,
-			},
-			time: {
-				from: 19,
-				to  : 29,
-			},
-			display: {
-				columns: 7,
-				theme:   'light'
-			}
-		};
-
 		this.roundDate = (date) => {
 			return new Date($filter('date')(date, 'yyyy-MM-dd 00:00:00'));
 		};
