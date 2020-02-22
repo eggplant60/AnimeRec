@@ -74,78 +74,24 @@
 
 	----------- ここから先はコンテナ内の作業 ---------------
 
-1. PostgreSQL の設定
+1. PostgreSQL の構成
 
-	1. ユーザ作成
-
-		```
-		# cd /AnimeRec/setup/
-		# ./00_create_user.sh
-		 * Starting PostgreSQL 12 database server         [ OK ]
-		Create user user in localhost:5432
-		Enter password for new role: ("abc"と入力)
-		Enter it again: ("abc"と入力)
-		success!
-		```
-
-	1. DB作成
-
-		```
-		# ./01_create_db.sh
-		Create DB anime_rec in localhost:5432
-		Password: ("abc"と入力)
-		success!
-		```
-
-	1. テーブル作成
-
-		```
-		# node 02_create_table.js
-		Complete.
-		[
-		Result {
-			command: 'CREATE',
-			rowCount: null,
-			oid: null,
-			rows: [],
-			fields: [],
-			_parsers: undefined,
-			_types: TypeOverrides { _types: [Object], text: {}, binary: {} },
-			RowCtor: null,
-			rowAsArray: false
-		},
-
-		...
-
-		success!
-		```
-
-	1. DBのタイムゾーンの指定＆テーブル確認
-
-		```
-		# sudo -u postgres psql
-		psql (12.2 (Ubuntu 12.2-1.pgdg16.04+1))
-		Type "help" for help.
-
-		postgres=# ALTER DATABASE anime_rec SET timezone TO 'Asia/Tokyo';
-		postgres=# \c anime_rec
-		You are now connected to database "anime_rec" as user "postgres".
-		anime_rec=# \d
-		```
-
-		以下の2つのテーブルが表示されればOK
-
-		```
-		            List of relations
-		      Name      | Type  | Owner
-		----------------+-------+--------
-		 program_genres | table | user
- 		 programs       | table | user
-		(2 rows)
-		```
-
-		確認後、`\q` でコンソールを抜ける
-
+	```
+	# cd /AnimeRec/setup/
+	# ./setup_db_all.sh
+	* Starting PostgreSQL 12 database server                     [ OK ]
+	Create user db_user in localhost:5432
+	CREATE ROLE
+	success!
+	Create DB db_anime_rec in localhost:5432
+	success!
+	Create tables in localhost:5432
+	success!
+	Alter database db_anime_rec set timezone to Asia/Tokyo in localhost:5432
+	ALTER DATABASE
+	success!
+	```
+	
 1. バッチ処理の動作確認
 
 	```
@@ -213,10 +159,11 @@
 
 1. ブラウザでの動作確認
 
-	"http://[2.の"host"]:[2.の"http]/" に
-	アクセスして番組表が表示されればOK
+	http://[2.の"host"]:[2.の"http"]/ にアクセスして番組表が表示されればOK
 
-1. CRON登録
+	例: http://192.168.1.100:8084/
+
+1. CRONへバッチ処理の登録
 
 	```
 	# crontab -e
@@ -228,5 +175,6 @@
 	0 9 * * * docker exec -i anime_rec "/AnimeRec/batch/batch.sh" >> /var/log/anime_rec.log 2>&1
 	```
 
+	=> DB内の番組表データが毎日更新されるようになる
 	
 	以上

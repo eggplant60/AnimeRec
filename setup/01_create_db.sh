@@ -10,6 +10,7 @@ database=$(cat $CONF_PATH | jq -r '.database')
 
 echo "Create DB $database in $db_host:$db_port"
 
+export PGPASSWORD=$db_password
 createdb -U $db_user \
 	-h $db_host -p $db_port \
 	--encoding='UTF-8'  --lc-collate='ja_JP.UTF-8' --lc-ctype='ja_JP.UTF-8' \
@@ -18,7 +19,9 @@ createdb -U $db_user \
 
 if [ "$?" == '0' ]; then
 	echo 'success!'
+	unset PGPASSWORD
 else
 	echo 'failed!'
+	unset PGPASSWORD
 	exit 1
 fi

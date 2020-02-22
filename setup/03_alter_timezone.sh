@@ -8,10 +8,9 @@ db_password=$(cat $CONF_PATH | jq -r '.password')
 db_port=$(cat $CONF_PATH | jq '.port')
 database=$(cat $CONF_PATH | jq -r '.database')
 
-/etc/init.d/postgresql start
+echo "Alter database $database set timezone to Asia/Tokyo in $db_host:$db_port"
 
-echo "Create user $db_user in $db_host:$db_port"
-sudo -u postgres psql -c "CREATE ROLE $db_user WITH LOGIN CREATEDB PASSWORD '""$db_password""';"
+sudo -u postgres psql -c "ALTER DATABASE $database SET timezone TO 'Asia/Tokyo';"
 
 if [ "$?" == '0' ]; then
 	echo 'success!'

@@ -1,7 +1,7 @@
 const {Pool, Client} = require('pg');
 const dbConf = require('../conf/db.json');
-//const tableDef = require('table_def.json');
-//console.log(dbConf);
+console.log('Create tables in ' + dbConf.host + ':' + dbConf.port);
+
 
 const sqlTablePrograms = 'CREATE TABLE IF NOT EXISTS programs (' +
 	'program_id varchar PRIMARY KEY,' +
@@ -51,13 +51,12 @@ client.connect();
 
 client.query(sqlTablePrograms + sqlIndexPrograms + sqlTableProgramGenres, (err, res) => {
 	if (!err) {
-	console.log(res);
-	console.log('success!');
+		//console.log(res);
+		console.log('success!');
 	} else {
-	console.error(err);
-	console.error('failed!');
+		console.error(err);
+		console.error('failed!');
 	}
 	client.end();
 });
 
-console.log('Complete.');
