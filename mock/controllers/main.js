@@ -9,14 +9,21 @@
 			'$window',
 			'ApiService', 
 			'CommonService', 
+			'ConfService',
 			AppCtrl]);
 
-	function AppCtrl($log, $timeout, $dialog, $window, api, common) {
+	function AppCtrl($log, $timeout, $dialog, $window, api, common, conf) {
 		$log.debug('AppCtrl: start ---------------------');
 
 		var vm = this;
-		vm.conf = angular.copy(common.defaultConf);
-		vm.searchEngine='https://google.com/search?tbm=isch&q='; // 'https://google.com/search?q=';
+		vm.searchEngine = 'https://google.com/search?tbm=isch&q='; // 'https://google.com/search?q=';
+		
+		/* 
+		 * 設定情報読み取り
+		 */
+		vm.conf = conf.get();
+		//vm.conf = angular.copy(conf.default);
+		//conf.set(vm.conf);
 
 		/* 
 		 * ビューの列数を早く確定させたいため、先に番組表の枠を作成する
@@ -194,6 +201,7 @@
 		 */
 		vm.setConf = (type, reload) => {
 			$log.debug('set conf ' + type);
+			let oldConfType = angular.copy(vm.conf[type]);  // キャンセルされたときこの値に戻す
 			$dialog.show({
 				//targetEvent: ev,
 				controller: ConfDialogCtrl,
@@ -205,17 +213,19 @@
 					confType: vm.conf[type]
 				}
 			})
-			.then((val) => {
+			.then((val) => { // OK
 				$log.debug('set conf ' + type + ': resolve');
 				$log.debug(vm.conf[type]);
+				conf.set(vm.conf); // save configuration
 				if (reload) {
 					vm.programList = common.createEmptyProgramList(vm.conf);
 					initReload();
 					mergeReserve();		
 				}
 			})
-			.catch((err) => {
+			.catch((err) => { // Cancel
 				$log.debug('set conf ' + type + ': reject');
+				vm.conf[type] = oldConfType;
 			});
 		};
 	}
