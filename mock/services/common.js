@@ -190,10 +190,19 @@ angular.module('app')
 			$dialog.show({
 				controller: VersionController,
 				parent: angular.element(document.body),
-				//targetEvent: ev,
 				clickOutsideToClose: true,
 				fullscreen: false,
 				templateUrl: 'partials/dialog-version.html'
+			});
+		};
+
+		this.showLogin = () => {
+			$dialog.show({
+				controller: VersionController,
+				parent: angular.element(document.body),
+				clickOutsideToClose: true,
+				fullscreen: false,
+				templateUrl: 'partials/dialog-login.html'
 			});			
 		};
 

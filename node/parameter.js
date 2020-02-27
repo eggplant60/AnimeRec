@@ -41,12 +41,8 @@ var checkReqParamDate = function (defaultValue, value) {
 	}
 };
 
-// YYYYmmddhhssffで返す
-var checkReqParamDateFuck = function (defaultValue, value) {
-	return date2YYYYmmddhhss(checkReqParamDate(defaultValue, value));
-};
 
-var checkReqParamDateFuck2 = function (defaultValue, value) {
+var checkReqParamDateJst = function (defaultValue, value) {
 	return date2Jst(checkReqParamDate(defaultValue, value));
 };
 
@@ -61,7 +57,6 @@ var date2Jst = function (date) {
 module.exports = {
 	checkReqParamCand,
 	checkReqParamNumber,
-	checkReqParamDateFuck,
-	checkReqParamDateFuck2,
+	checkReqParamDateJst,
 	date2Jst,
 };

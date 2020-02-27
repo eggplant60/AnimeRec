@@ -80,6 +80,7 @@
 			})
 			.catch((err) => {
 				$log.error('merge: can not get reservations!');
+				common.showLogin();
 			});	
 		}
 
