@@ -62,5 +62,29 @@ a:hover {
 }
 
 .conf-dialog {
-	min-width: 450px;
+	max-width: 450px;
+	width: 100%;
+}
+
+.login-dialog {
+	max-width: 650px;
+	width: 100%;
+}
+
+.previous {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 60px;
+	min-width: 50px;
+	z-index: 50;
+}
+
+.next {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	min-width: 50px;
+	z-index: 50;
 }

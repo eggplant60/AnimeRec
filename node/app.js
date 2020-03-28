@@ -1,11 +1,11 @@
 const restClient = require('node-rest-client-promise').Client;
 const dbClient = require('pg').Client;
 const Express = require('express');
+const fs = require('fs');
 const {
 	checkReqParamCand,
 	checkReqParamNumber,
-	checkReqParamDateFuck,
-	checkReqParamDateFuck2,
+	checkReqParamDateJst,
 	date2Jst,
 } = require('./parameter.js');
 
@@ -22,7 +22,7 @@ const restEndpoint  = {
 const timeout = 10000; // 10 sec
 const rest = new restClient();
 const headerPath = '../conf/chan_toru.json';
-const defaultArgs = {
+var defaultArgs = {
 	headers: require(headerPath),
 	requestConfig: {
 		timeout: timeout
@@ -39,8 +39,10 @@ const app = Express();
 app.use(Express.json());
 app.use(Express.urlencoded({ extended: true }));
 const expressEndpoint = {
-	search   : '/api/programs/',       // get = 一覧取得
-	resv     : '/api/reservations/',   // post = [一覧取得, 予約, 削除, 更新]
+	search   : '/api/programs/',       // get, 一覧取得
+	resv     : '/api/reservations/',   // post, [一覧取得, 予約, 削除, 更新]
+	auth     : '/api/auth/',           // post, 認証情報セット
+	login    : '/login/',          // get, 認証取得
 };
 app.use((req, res, next) => {   // CORS対応
 	res.header('Access-Control-Allow-Origin', '*');
@@ -55,7 +57,7 @@ app.use((req, res, next) => {   // CORS対応
 	next();
 });
 
-/* --------------------- CHAN-TORU -------------------------------- */
+
 
 /* 
  * 2. 番組予約操作 API
@@ -146,7 +148,7 @@ function listReservations(req, res) {
 		val.response.readable = true;
 		var statusCode = val.response.statusCode;
 
-		if (statusCode === 200) { // 200で返ってきたらこちらも200で返す
+		if (statusCode === 200 && data.list) { // 200で返ってきたらこちらも200で返す
 			return res.status(200).json(data.list);
 		} else {                  // 200以外で返ってきたら500で返す
 			// HTMLで返ってくる
@@ -189,7 +191,7 @@ function addReservation(req, res) {
 			sid      : checkReqParamNumber('0', body.sid), // チャンネルID
 			eid      : checkReqParamNumber('0', body.eid), // 番組ID
 			category : checkReqParamCand(['1', '2'], body.category),
-			date     : checkReqParamDateFuck2(defaultDate, body.date), // 必須
+			date     : checkReqParamDateJst(defaultDate, body.date), // 必須
 			duration : checkReqParamNumber('1200', body.duration), // 必須
 			// 以下, 設定不要なパラメータ
 			//double   : 'on',
@@ -437,6 +439,60 @@ app.get(expressEndpoint.search, function(req, res){
 });
 
 /* 
+ * 7. CHAN-TORUからの認証受け取りAPI
+ * @param
+ * @body
+ * {"cookie": "..."}
+ */
+app.post(expressEndpoint.auth, function(req, res){
+	console.log('API07: Access to ' + expressEndpoint.auth);
+	
+	// 受け取ったcooikeをheaderに代入
+	var cookie = req.body.cookie;
+	if (!cookie) {
+		console.log('API07: cookie is undefined.');
+		return res.status(400).json({
+			errorCode: 'E071',
+			errorMsg:  'Error: cookie is undefined.'
+		});
+	}
+	console.log('API07: set cookie. ' + cookie);
+	defaultArgs.headers.Cookie = cookie;
+
+	// ファイルに書き出し
+	let headerStr = JSON.stringify(defaultArgs.headers, null, '\t');
+	fs.writeFile(__dirname + '/' + headerPath, headerStr, (err) => {
+		if (err) {
+			console.error(err);
+		}
+		res.redirect(301, expressEndpoint.login);
+	});
+	
+});
+
+/* 
+ * 8. 認証取得用ページ
+ */
+app.get(expressEndpoint.login, function(req, res) {
+	res.status(200).send(
+		'<!DOCTYPE html>' +
+		'<html>' + 
+		'<head>' +
+		'	<meta charset="UTF-8" />' +
+		'	<title>ログイン</title>' +
+		'</head>' +
+		'<body>' +
+		'	<iframe src="' + chanToruUrl + '/index" id="iframe1" width="500" height="500"></iframe>' +
+		'	<form action="' + expressEndpoint.auth + '" method="post">' +
+		'		<textarea type="input" name="cookie" cols="50" rows="4"></textarea>' +
+		'		<input type="submit" name="submit" value="送信" />' +
+		'	</form>' +
+		'</body>' +
+		'</html>'
+	);
+});
+
+/* 
  * CHAN-TORUの認証確認用の関数
  */
 function isAuthenticated() {
@@ -456,14 +512,7 @@ function isAuthenticated() {
 	});
 }
 
-
-isAuthenticated()
-.then((val) => {
-	var server = app.listen(serverPort, () => {
-		//var addr = this.address();
-		console.log('Node.js is listening to localhost:' + serverPort);
-	});
-})
-.catch((err) => {
-	console.error('Error: Authentication failed. Please check ' + headerPath);
+// Express
+var server = app.listen(serverPort, () => {
+	console.log('Node.js is listening to localhost:' + serverPort);
 });

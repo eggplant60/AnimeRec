@@ -190,10 +190,40 @@ angular.module('app')
 			$dialog.show({
 				controller: VersionController,
 				parent: angular.element(document.body),
-				//targetEvent: ev,
 				clickOutsideToClose: true,
 				fullscreen: false,
 				templateUrl: 'partials/dialog-version.html'
+			});
+		};
+
+		this.showLogin = () => {
+			$dialog.show({
+				controller: VersionController,
+				parent: angular.element(document.body),
+				clickOutsideToClose: true,
+				fullscreen: false,
+				template: [
+					'<md-dialog class="login-dialog" aria-label="login">',
+					'	<md-toolbar>',
+					'		<div class="md-toolbar-tools">',
+					'			<h2>未ログイン</h2>',
+					'			<span flex></span>',
+					'			<md-button class="md-icon-button" ng-click="cancel()">',
+					'				<i class="material-icons" ng-style="{ color: \'white\' }">close</i>',
+					'			</md-button>',
+					'		</div>',
+					'	</md-toolbar>',
+					'	<md-dialog-content>',
+					'	<div class="md-dialog-content">',
+					'		<p>',
+					'			CHAN-TORUへのログインがされていません。',
+					'			下のリンクからログイン処理を行ったあと、画面をリロードしてください。',
+					'		</p>',
+					'		<a href="' + api.login + '" target="_blank" rel="noopener noreferrer">ログイン</a>',
+					'	</div>',
+					'	</md-dialog-content>',
+					'</md-dialog>'
+				].join('\n')
 			});			
 		};
 
@@ -223,14 +253,38 @@ angular.module('app')
 	}])
 
 	// ------------------------- filter -----------------------------------
+
+	/* 
+	 * 例: 	
+	 * 03/29(日) 23:00～23:30 [ＴＯＫＹＯＭＸ１]
+	 *  ↓
+	 * 03/29(日) 23:00～23:30
+	 */
 	.filter('extractDate', () => value => value.split('[')[0].trim())
+
+	/* 
+	 * 1. 全角スペース、全角シャープを半角に
+	 * 2. 先頭に"アニメ"もしくは"テレビアニメ"とある場合は, "#"もしくは"["の前までを取り出す
+	 *    ※ cf. アニメ「タイトル」
+	 * 3. それ以外は"#"もしくは"["もしくは"「"の前まで取り出す
+	 * 4. 取り出した結果を返す。ただし長さ0であればもとの文字列を返す
+	 */
 	.filter('programTitle', () => {
 		return (value) => {
-			let tmp = value.replace(/　/g, ' ').replace(/＃/g, '#');
-			if (/^アニメ.+$/.test(tmp)) {
-				return tmp.split('#')[0].split('[')[0];
+			let tmp1 = value.replace(/　/g, ' ').replace(/＃/g, '#');
+			let tmp2;
+			
+			if (/^アニメ.+$/.test(tmp1) || /^テレビアニメ.+$/.test(tmp1)) {
+				tmp2 = tmp1.match(/^[^#\[]+/);
 			} else {
-				return tmp.split('「')[0].split('#')[0].split('[')[0];
+				tmp2 = tmp1.match(/^[^#\[「]+/);
+			}
+			if (tmp2 === null) {
+				return tmp1;
+			} else if (tmp2[0].length === 0) {
+				return tmp1;
+			} else {
+				return tmp2[0];
 			}
 		};
 	})
