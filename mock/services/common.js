@@ -202,7 +202,28 @@ angular.module('app')
 				parent: angular.element(document.body),
 				clickOutsideToClose: true,
 				fullscreen: false,
-				templateUrl: 'partials/dialog-login.html'
+				template: [
+					'<md-dialog class="login-dialog" aria-label="login">',
+					'	<md-toolbar>',
+					'		<div class="md-toolbar-tools">',
+					'			<h2>未ログイン</h2>',
+					'			<span flex></span>',
+					'			<md-button class="md-icon-button" ng-click="cancel()">',
+					'				<i class="material-icons" ng-style="{ color: \'white\' }">close</i>',
+					'			</md-button>',
+					'		</div>',
+					'	</md-toolbar>',
+					'	<md-dialog-content>',
+					'	<div class="md-dialog-content">',
+					'		<p>',
+					'			CHAN-TORUへのログインがされていません。',
+					'			下のリンクからログイン処理を行ったあと、画面をリロードしてください。',
+					'		</p>',
+					'		<a href="' + api.login + '" target="_blank" rel="noopener noreferrer">ログイン</a>',
+					'	</div>',
+					'	</md-dialog-content>',
+					'</md-dialog>'
+				].join('\n')
 			});			
 		};
 
