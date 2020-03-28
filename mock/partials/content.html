@@ -1,5 +1,13 @@
 <div class="main-content" layout="row" 
 		ng-class="{'dark-content': ctrl.conf.display.theme === 'dark'}">
+
+	<!-- 戻るボタン -->
+	<md-button md-no-ink class="previous" ng-click="ctrl.scrollToRel(-1)">
+		<!--
+		<i class="material-icons">chevron_left</i>
+		-->
+	</md-button>
+
 	<div ng-repeat="column in ctrl.programList">
 
 		<div ng-attr-id="{{ 'column' + $index }}" class="dow-column">
@@ -62,4 +70,11 @@
 			</md-content>
 		</div>
 	</div>
+
+	<!-- 進むボタン -->
+	<md-button md-no-ink class="next" ng-click="ctrl.scrollToRel(1)">
+		<!--
+		<i class="material-icons">chevron_right</i>
+		-->
+	</md-button>
 </div>
