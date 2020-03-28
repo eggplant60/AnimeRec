@@ -232,14 +232,38 @@ angular.module('app')
 	}])
 
 	// ------------------------- filter -----------------------------------
+
+	/* 
+	 * 例: 	
+	 * 03/29(日) 23:00～23:30 [ＴＯＫＹＯＭＸ１]
+	 *  ↓
+	 * 03/29(日) 23:00～23:30
+	 */
 	.filter('extractDate', () => value => value.split('[')[0].trim())
+
+	/* 
+	 * 1. 全角スペース、全角シャープを半角に
+	 * 2. 先頭に"アニメ"もしくは"テレビアニメ"とある場合は, "#"もしくは"["の前までを取り出す
+	 *    ※ cf. アニメ「タイトル」
+	 * 3. それ以外は"#"もしくは"["もしくは"「"の前まで取り出す
+	 * 4. 取り出した結果を返す。ただし長さ0であればもとの文字列を返す
+	 */
 	.filter('programTitle', () => {
 		return (value) => {
-			let tmp = value.replace(/　/g, ' ').replace(/＃/g, '#');
-			if (/^アニメ.+$/.test(tmp)) {
-				return tmp.split('#')[0].split('[')[0];
+			let tmp1 = value.replace(/　/g, ' ').replace(/＃/g, '#');
+			let tmp2;
+			
+			if (/^アニメ.+$/.test(tmp1) || /^テレビアニメ.+$/.test(tmp1)) {
+				tmp2 = tmp1.match(/^[^#\[]+/);
 			} else {
-				return tmp.split('「')[0].split('#')[0].split('[')[0];
+				tmp2 = tmp1.match(/^[^#\[「]+/);
+			}
+			if (tmp2 === null) {
+				return tmp1;
+			} else if (tmp2[0].length === 0) {
+				return tmp1;
+			} else {
+				return tmp2[0];
 			}
 		};
 	})
